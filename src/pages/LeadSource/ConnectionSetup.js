@@ -70,7 +70,7 @@ const ConnectionSetup = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      history.push('/leadsource');
+      history.push('/settings');
     }, 1000);
   };
 
@@ -84,7 +84,7 @@ const ConnectionSetup = () => {
           {/* Back Button */}
           <button
             className='btn btn-sm btn-soft-primary d-flex align-items-center gap-2 mb-4'
-            onClick={() => history.push('/leadsource')}
+            onClick={() => history.push('/settings')}
           >
             <IoArrowBack />
             <span>Back to Lead Sources</span>
@@ -184,7 +184,7 @@ const ConnectionSetup = () => {
                 </button>
                 <button
                   className='btn btn-soft-danger'
-                  onClick={() => history.push('/leadsource')}
+                  onClick={() => history.push('/settings')}
                 >
                   Cancel
                 </button>

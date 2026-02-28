@@ -1,7 +1,10 @@
 import { APIClient, setAuthorization, setRequestMeta } from './api_helper';
+import { LeadSourceAPIClient, setLeadSourceAuth } from './leadsource_api_helper';
 import * as url from './url_helpers/index';
+import * as lsUrl from './url_helpers/leadsource';
 
 const api = new APIClient();
+const leadsourceApi = new LeadSourceAPIClient();
 // Gets the logged in user data from local session
 
 const authToken = localStorage.getItem('authToken');
@@ -298,6 +301,10 @@ export const getCreditHistory = (data) => api.get(url.CREDIT_HISTORY, data);
 
 export const getWalletCoinBalance = (data) => api.get(url.DIG_WALLET_BALANCE, data);
 export const purchaseCreditsWithCoins = (data) => api.create(url.DIG_WALLET_PURCHASE, data);
+
+// Lead Source
+setLeadSourceAuth('a869bd5a-01b1-40a9-9862-8ea3c28f501b', '69959f58b78f675bcd3f7f66');
+export const listConnections = (data) => leadsourceApi.get(lsUrl.LEAD_CONNECTIONS, data);
 
 // === voice agent===
 // export const createVoiceConfig = (data) => api.create(url.VOICE_CONFIG, data);

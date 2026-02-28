@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import {
   Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Spinner,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -13,6 +17,7 @@ import {
 import BreadCrumb from '../../Components/Common/BreadCrumb';
 import MetaTag from '../../Components/Common/Meta';
 import { useHistory } from 'react-router-dom';
+import { listConnections } from '../../helpers/backend_helper';
 
 //icons
 import { FaMeta } from 'react-icons/fa6';
@@ -37,13 +42,87 @@ import { FaHandshake } from 'react-icons/fa';
 import { BsBuildingsFill } from 'react-icons/bs';
 import { MdRestaurant } from 'react-icons/md';
 
+const sourceIconMap = {
+  facebookLeadAds: <FaMeta />,
+  webhook: <MdOutlineWebhook />,
+  form: <SiGoogleforms />,
+  googleForm: <SiGoogleforms />,
+  typeform: <SiTypeform />,
+  googleAds: <SiGoogleads />,
+  linkedinLeadGen: <SiLinkedin />,
+  landingPage: <CgWebsite />,
+  phoneContact: <ImMobile />,
+  ocrApp: <IoQrCodeOutline />,
+  zohoCrm: <SiZoho />,
+  hubspotCrm: <FaHubspot />,
+  salesforce: <LiaSalesforce />,
+  indiaMart: <FaIndustry />,
+  tradeIndia: <FaHandshake />,
+  magicBricks: <BsBuildingsFill />,
+  zomato: <MdRestaurant />,
+};
+
 const LeadSources = (props) => {
   const history = useHistory();
 
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalUrl, setModalUrl] = useState('');
 
-  const installedSources = [];
+  // Installed connections state
+  const [connections, setConnections] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 20,
+    totalPages: 0,
+  });
+
+  const fetchConnections = useCallback((page = 1) => {
+    setLoading(true);
+    listConnections({ page, limit: 20 })
+      .then((response) => {
+        setConnections(response.data || []);
+        setPagination(
+          response.pagination || { total: 0, page, limit: 20, totalPages: 0 },
+        );
+      })
+      .catch((err) => {
+        console.error('Failed to fetch connections:', err);
+        setConnections([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchConnections(currentPage);
+  }, [currentPage, fetchConnections]);
+
+  // Listen for messages from the Facebook connect iframe
+  const handleIframeMessage = useCallback((event) => {
+    if (event.origin !== 'https://oauth.automationsbuilder.com') return;
+
+    if (event.data?.type === 'fb_connect') {
+      if (event.data.status === 'success') {
+        console.log('Facebook connected successfully:', event.data.data);
+        fetchConnections(currentPage);
+      } else {
+        console.error('Facebook connection failed:', event.data.data);
+      }
+      setShowModal(false);
+      setModalUrl('');
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('message', handleIframeMessage);
+    return () => window.removeEventListener('message', handleIframeMessage);
+  }, [handleIframeMessage]);
 
   const allSources = [
     {
@@ -192,11 +271,16 @@ const LeadSources = (props) => {
     );
   };
 
-  const filteredInstalled = filterSources(installedSources);
   const filteredAll = filterSources(allSources);
 
   function handleCreateNewConnection(source) {
-    history.push('/leadsource/' + source.key, { source });
+    if (source.key === 'facebookLeadAds') {
+      const token = localStorage.getItem('authToken') || '';
+      setModalUrl(`https://oauth.automationsbuilder.com/lead-session?token=${token}`);
+      setShowModal(true);
+    } else {
+      history.push('/settings/' + source.key, { source });
+    }
   }
 
   return (
@@ -240,7 +324,7 @@ const LeadSources = (props) => {
                   transition: 'all 0.2s',
                 }}
               >
-                Installed ({installedSources.length})
+                Installed ({pagination.total})
               </button>
               <button
                 type='button'
@@ -259,105 +343,179 @@ const LeadSources = (props) => {
 
           {/* Installed Tab Content */}
           {activeTab === 'installed' && (
-            <div className='row g-4'>
-              {filteredInstalled.length === 0 ? (
-                <div className='col-12'>
-                  <div className='text-center py-5'>
-                    <p className='text-muted'>No installed lead sources found</p>
-                  </div>
+            <div>
+              {loading ? (
+                <div className='text-center py-5'>
+                  <Spinner color='primary' />
+                  <p className='text-muted mt-2'>Loading connections...</p>
+                </div>
+              ) : connections.length === 0 ? (
+                <div className='text-center py-5'>
+                  <p className='text-muted'>No installed lead sources found</p>
                 </div>
               ) : (
-                filteredInstalled.map((source) => (
-                  <div key={source.id} className='col-md-6 col-lg-4 col-xl-3'>
-                    <div
-                      className='card border-1 mb-1'
-                      style={{
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        transition: 'all 0.2s',
-                        cursor: 'pointer',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.15)';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <div className='card-body p-3'>
-                        <div className='d-flex align-items-start mb-2'>
-                          <div
-                            className='me-2'
-                            style={{
-                              fontSize: '1.5rem',
-                              background: '#f1f5f9',
-                              borderRadius: '6px',
-                              padding: '0.4rem',
-                              width: '45px',
-                              height: '45px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            {source.icon}
+                <>
+                  <div className='row g-4'>
+                    {connections.map((connection) => (
+                      <div key={connection._id || connection.id} className='col-md-6 col-lg-4 col-xl-3'>
+                        <div
+                          className='card border-1 mb-1'
+                          style={{
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            transition: 'all 0.2s',
+                            cursor: 'pointer',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.15)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                        >
+                          <div className='card-body p-3'>
+                            <div className='d-flex align-items-start mb-2'>
+                              <div
+                                className='me-2'
+                                style={{
+                                  fontSize: '1.5rem',
+                                  background: '#f1f5f9',
+                                  borderRadius: '6px',
+                                  padding: '0.4rem',
+                                  width: '45px',
+                                  height: '45px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                {sourceIconMap[connection.source || connection.key] || <BsGearWideConnected />}
+                              </div>
+                              <div className='flex-grow-1'>
+                                <h6 className='card-title mb-1' style={{ color: '#1e293b', fontWeight: '600', fontSize: '0.95rem' }}>
+                                  {connection?.configuration?.pageName || connection.source} {" - "}
+                                  {connection?.configuration?.formName || connection.source}
+                                </h6>
+                                <span
+                                  className='badge'
+                                  style={{
+                                    backgroundColor: connection.status === 'active' ? '#22c55e' : '#f59e0b',
+                                    color: 'white',
+                                    fontSize: '0.7rem',
+                                    fontWeight: '500',
+                                    padding: '0.15rem 0.5rem',
+                                  }}
+                                >
+                                  {connection.status || 'active'}
+                                </span>
+                              </div>
+                            </div>
+                            <p className='card-text text-muted mb-2' style={{ fontSize: '0.8rem', lineHeight: '1.4' }}>
+                              {connection.description || connection.source}
+                            </p>
+                            <div className='d-flex gap-2'>
+                              <button
+                                className='btn btn-sm btn-soft-dark d-flex align-items-center gap-1'
+                                style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem' }}
+                              >
+                                <BsGearWideConnected />
+                                <span>Configure</span>
+                              </button>
+                              <button
+                                className='btn btn-sm btn-soft-primary d-flex align-items-center gap-1'
+                                style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem' }}
+                              >
+                                <FiFileText />
+                                <span>Logs</span>
+                              </button>
+                              <button
+                                className='btn btn-sm d-flex align-items-center gap-1'
+                                style={{
+                                  backgroundColor: '#fee2e2',
+                                  border: '1px solid #fecaca',
+                                  color: '#dc2626',
+                                  fontWeight: '500',
+                                  fontSize: '0.8rem',
+                                  padding: '0.3rem 0.5rem',
+                                }}
+                              >
+                                <FaTrashCan />
+                                <span>Remove</span>
+                              </button>
+                            </div>
                           </div>
-                          <div className='flex-grow-1'>
-                            <h6 className='card-title mb-1' style={{ color: '#1e293b', fontWeight: '600', fontSize: '0.95rem' }}>
-                              {source.name}
-                            </h6>
-                            <span
-                              className='badge'
-                              style={{
-                                backgroundColor: '#22c55e',
-                                color: 'white',
-                                fontSize: '0.7rem',
-                                fontWeight: '500',
-                                padding: '0.15rem 0.5rem',
-                              }}
-                            >
-                              {source.status}
-                            </span>
-                          </div>
-                        </div>
-                        <p className='card-text text-muted mb-2' style={{ fontSize: '0.8rem', lineHeight: '1.4' }}>
-                          {source.description}
-                        </p>
-                        <div className='d-flex gap-2'>
-                          <button
-                            className='btn btn-sm btn-soft-dark d-flex align-items-center gap-1'
-                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem' }}
-                          >
-                            <BsGearWideConnected />
-                            <span>Configure</span>
-                          </button>
-                          <button
-                            className='btn btn-sm btn-soft-primary d-flex align-items-center gap-1'
-                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem' }}
-                          >
-                            <FiFileText />
-                            <span>Logs</span>
-                          </button>
-                          <button
-                            className='btn btn-sm d-flex align-items-center gap-1'
-                            style={{
-                              backgroundColor: '#fee2e2',
-                              border: '1px solid #fecaca',
-                              color: '#dc2626',
-                              fontWeight: '500',
-                              fontSize: '0.8rem',
-                              padding: '0.3rem 0.5rem',
-                            }}
-                          >
-                            <FaTrashCan />
-                            <span>Remove</span>
-                          </button>
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))
+
+                  {/* Pagination */}
+                  {pagination.totalPages > 1 && (
+                    <div className='d-flex justify-content-between align-items-center mt-4'>
+                      <p className='text-muted mb-0' style={{ fontSize: '0.85rem' }}>
+                        Showing {(currentPage - 1) * pagination.limit + 1} -{' '}
+                        {Math.min(currentPage * pagination.limit, pagination.total)} of{' '}
+                        {pagination.total} connections
+                      </p>
+                      <ul className='pagination pagination-sm mb-0'>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                          <button className='page-link' onClick={() => setCurrentPage(1)}>
+                            <i className='ri-skip-back-mini-line'></i>
+                          </button>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                          <button className='page-link' onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>
+                            <i className='ri-arrow-left-s-line'></i>
+                          </button>
+                        </li>
+                        {(() => {
+                          const pages = [];
+                          const maxVisible = 5;
+                          let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                          let endPage = Math.min(pagination.totalPages, startPage + maxVisible - 1);
+                          if (endPage - startPage + 1 < maxVisible) {
+                            startPage = Math.max(1, endPage - maxVisible + 1);
+                          }
+                          if (startPage > 1) {
+                            pages.push(
+                              <li key='start-dots' className='page-item disabled'>
+                                <span className='page-link'>...</span>
+                              </li>,
+                            );
+                          }
+                          for (let i = startPage; i <= endPage; i++) {
+                            pages.push(
+                              <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                                <button className='page-link' onClick={() => setCurrentPage(i)}>
+                                  {i}
+                                </button>
+                              </li>,
+                            );
+                          }
+                          if (endPage < pagination.totalPages) {
+                            pages.push(
+                              <li key='end-dots' className='page-item disabled'>
+                                <span className='page-link'>...</span>
+                              </li>,
+                            );
+                          }
+                          return pages;
+                        })()}
+                        <li className={`page-item ${currentPage === pagination.totalPages ? 'disabled' : ''}`}>
+                          <button className='page-link' onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}>
+                            <i className='ri-arrow-right-s-line'></i>
+                          </button>
+                        </li>
+                        <li className={`page-item ${currentPage === pagination.totalPages ? 'disabled' : ''}`}>
+                          <button className='page-link' onClick={() => setCurrentPage(pagination.totalPages)}>
+                            <i className='ri-skip-forward-mini-line'></i>
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -458,6 +616,28 @@ const LeadSources = (props) => {
               )}
             </div>
           )}
+          {/* Facebook Lead Ads Modal */}
+          <Modal isOpen={showModal} toggle={() => setShowModal(false)} size='xl' centered>
+            <ModalHeader toggle={() => setShowModal(false)}>
+              <div className='d-flex align-items-center gap-2'>
+                <FaMeta style={{ color: '#1877F2' }} />
+                <span>Facebook Lead Ads</span>
+              </div>
+            </ModalHeader>
+            <ModalBody style={{ padding: 0, height: '80vh' }}>
+              {modalUrl && (
+                <iframe
+                  src={modalUrl}
+                  title='Facebook Lead Ads Connection'
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                  }}
+                />
+              )}
+            </ModalBody>
+          </Modal>
         </Container>
       </div>
     </React.Fragment>

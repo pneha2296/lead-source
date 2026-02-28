@@ -1,7 +1,0 @@
-.dig-action-button:hover {
-  background-color: grey;
-  transform: scaleX(1.1);
-}
-.dig-action-button {
-  transition: all ease 0.3s;
-}

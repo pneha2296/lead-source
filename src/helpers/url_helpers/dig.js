@@ -32,4 +32,4 @@ export const DIG_WALLET_PURCHASE = BASE_URL + '/api/dpg/v1/credits/wallet/reques
 
 // export const TABLE = BASE_URL + '/api/dpg/v1/table'
 // export const VOICE_CONFIG = BASE_URL + '/api/dpg/v1/voice-agent/config/env';
-// export const VOICE_CONFIGS = BASE_URL + '/api/dpg/v1/voice-agent/configs/env' 
+// export const VOICE_CONFIGS = BASE_URL + '/api/dpg/v1/voice-agent/configs/env'

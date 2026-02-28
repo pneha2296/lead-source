@@ -15,7 +15,6 @@ import UserSessionSaga from './userSession/saga';
 import imageExpSaga from './dig/image/saga';
 //pdf exp
 import PdfExpSaga from './dig/pdf/saga';
-import pdfBuilderSaga from '../pages/DynamicPdf/store/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -28,7 +27,6 @@ export default function* rootSaga() {
     fork(UserRolesSaga),
     fork(imageExpSaga),
     fork(PanelMenuSaga),
-    fork(pdfBuilderSaga),
     fork(PdfExpSaga)
   ]);
 }

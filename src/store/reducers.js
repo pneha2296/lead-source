@@ -16,7 +16,7 @@ import PanelMenu from './panelMenu/reducer';
 import ImageExperience from './dig/image/reducer';
 
 import PdfExp from './dig/pdf/reducer'
-import pdfBuilderReducer from '../pages/DynamicPdf/store/reducer';
+
 const rootReducer = combineReducers({
   // public
   Layout,
@@ -27,7 +27,6 @@ const rootReducer = combineReducers({
   UserSession,
   ImageExperience,
   PanelMenu,
-  pdfBuilder: pdfBuilderReducer,
   PdfExp,
 });
 

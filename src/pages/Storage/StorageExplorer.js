@@ -10,7 +10,6 @@ import MetaTag from '../../Components/Common/Meta';
 // --- IMPORTS FROM PDF BUILDER PATTERN ---
 import Preloader from '../../Components/Loaders/Preloader';
 import CustomNotification from '../../Components/Common/CustomNotification';
-import WarningDialogModal from '../DynamicImage/WarningDialogModal';
 
 // Import API functions
 import { getStorageFiles, bulkDeleteStorageFiles, getStorageCreds, createStorageCreds } from '../../helpers/backend_helper';
@@ -1171,18 +1170,6 @@ const StorageExplorer = () => {
           </Modal>
 
           {preLoading && <Preloader />}
-
-          {warningModal.status && (
-            <WarningDialogModal
-              open={warningModal.status}
-              handleClose={closeModal}
-              action={warningModal.action}
-              data={warningModal.data}
-              cb={callBack}
-              message={warningModal.message}
-              customMessage={warningModal.customMessage}
-            />
-          )}
         </div>
       </React.Fragment>
   );
