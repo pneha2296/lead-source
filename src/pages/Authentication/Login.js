@@ -70,7 +70,7 @@ const Login = (props) => {
 
   useEffect(() => {
     try {
-      if (['cbleadsource.netlify.app', 'localhost'].includes(window.location.hostname)) {
+      if (!['cbleadsource.netlify.app', 'localhost'].includes(window.location.hostname)) {
         window.location.href = `/login?forward_to=${encodeURIComponent('/leadsource/settings')}`;
         return;
       }
