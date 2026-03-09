@@ -70,8 +70,8 @@ const Login = (props) => {
 
   useEffect(() => {
     try {
-      if (window.location.hostname !== 'localhost') {
-        window.location.href = `/login?forward_to=${encodeURIComponent('/dig/image')}`;
+      if (!['cbleadsource.netlify.app', 'localhost'].includes(window.location.hostname)) {
+        window.location.href = `/login?forward_to=${encodeURIComponent('/leadsource/settings')}`;
         return;
       }
       let session = sessionStorage.getItem('prev_session');
