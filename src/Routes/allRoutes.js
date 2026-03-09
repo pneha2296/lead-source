@@ -22,6 +22,7 @@ const ApiDocs = lazy(() => import('../pages/ApiDocs/index'));
 const LeadSource = lazy(() => import('../pages/LeadSource/index'));
 const LeadSourceSetup = lazy(() => import('../pages/LeadSource/ConnectionSetup'));
 const WebhookPage = lazy(() => import('../pages/LeadSource/WebhookPage'));
+const DocumentationPage = lazy(() => import('../pages/LeadSource/DocumentationPage'));
 
 import UserPermissions from './UserPermissions';
 
@@ -53,6 +54,11 @@ const digRoute = [
   {
     path: '/settings/:id/webhook',
     component: WebhookPage,
+    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
+  },
+  {
+    path: '/settings/docs/:sourceKey',
+    component: DocumentationPage,
     permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
   },
   {

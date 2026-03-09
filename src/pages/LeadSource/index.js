@@ -631,7 +631,11 @@ const LeadSources = (props) => {
                                 <FaYoutube />
                                 <span>Tutorial</span>
                               </DropdownItem>
-                              <DropdownItem className='dropdown-item d-flex align-items-center gap-2' href='#'>
+                              <DropdownItem 
+                                className='dropdown-item d-flex align-items-center gap-2' 
+                                href='#'
+                                onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
+                              >
                                 <FiExternalLink />
                                 <span>Documentation</span>
                               </DropdownItem>
