@@ -33,6 +33,25 @@ export const GENERIC_WEBHOOK_CONNECTION = '/api/auth/generic_webhook/connection'
 export const GENERIC_WEBHOOK_DELETE = '/api/auth/generic_webhook';
 export const GENERIC_WEBHOOK_GET_FIELD_LIST = '/api/auth/generic_webhook/get-field-list';
 
+// Phone Contact APIs
+export const PHONE_CONTACT_CONNECT = '/api/auth/phone_connect/connect';
+export const PHONE_CONTACT_CONNECTION = '/api/auth/phone_connect/connection';
+export const PHONE_CONTACT_DELETE = '/api/auth/phone_connect';
+export const PHONE_CONTACT_GET_FIELD_LIST = '/api/auth/phone_connect/get-field-list';
+export const PHONE_CONTACT_UPLOAD_URL = '/api/auth/phone_connect/upload-url';
+export const PHONE_CONTACT_PROCESS_FILE = '/api/auth/phone_connect/process-file';
+export const PHONE_CONTACT_UPLOAD_JSON = '/api/auth/phone_connect/upload-json';
+
+// Typeform APIs
+export const TYPEFORM_CONNECT = '/api/auth/typeform/connect';
+export const TYPEFORM_CALLBACK = '/api/auth/typeform/callback';
+export const TYPEFORM_FORMS = '/api/auth/typeform/forms';
+export const TYPEFORM_SAVE_SELECTION = '/api/auth/typeform/save-selection';
+export const TYPEFORM_CONNECTION = '/api/auth/typeform/connection';
+export const TYPEFORM_GET_FIELD_LIST = '/api/auth/typeform/get-field-list';
+export const TYPEFORM_DELETE = '/api/auth/typeform';
+export const TYPEFORM_WEBHOOK_CONNECT = '/api/auth/typeform/webhook-connect';
+
 export const CRM_FIELDS = 'https://mapi.1automations.com/api/v2/crm/fields';
 export const FIELD_MAPPING = '/api/auth/field-mapping';
 export const FIELD_MAPPING_UPSERT = '/api/auth/field-mapping/upsert';

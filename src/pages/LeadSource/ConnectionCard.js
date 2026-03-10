@@ -68,6 +68,7 @@ const TITLE_RESOLVERS = {
   },
   genericWebhook: (c) => `${c?.configuration?.name} (${c?.configuration?.webhookType})`,
   zohoAccount: (c) => c?.configuration?.accountName,
+  typeForm: (c) => c?.configuration?.formName,
   accountName: (c) => c?.configuration?.accountName || c.name || c.source,
   connectionName: (c) => c?.configuration?.connectionName || c.name || c.source,
   defaultTitle: (c) => c.name || c.source,
@@ -143,7 +144,8 @@ const PROVIDER_CONFIG = {
 
   // Typeform
   typeform: {
-    getTitle: TITLE_RESOLVERS.connectionName,
+    getTitle: TITLE_RESOLVERS.typeForm,
+    getSubTitle: (c) => c?.configuration?.email,
     actions: ['configure', 'webhooks', 'fieldMapping', 'logs', 'delete'],
   },
 
@@ -158,13 +160,9 @@ const PROVIDER_CONFIG = {
   },
 
   // Phone Contact
-  phone_contact: {
-    getTitle: TITLE_RESOLVERS.connectionName,
-    actions: ['configure', 'logs', 'delete'],
-  },
-  phoneContact: {
-    getTitle: TITLE_RESOLVERS.connectionName,
-    actions: ['configure', 'logs', 'delete'],
+  phone_connect: {
+    getTitle: TITLE_RESOLVERS.accountName,
+    actions: ['configure', 'webhooks', 'logs', 'delete'],
   },
 
   // OCR App

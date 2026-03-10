@@ -19,7 +19,7 @@ import {
 import BreadCrumb from '../../Components/Common/BreadCrumb';
 import MetaTag from '../../Components/Common/Meta';
 import { useHistory } from 'react-router-dom';
-import { listConnections, deleteConnection, deleteIndiamartConnection, deleteZohoConnection, deleteGenericWebhookConnection, pullIndiamartLeads, pullZohoLeads, updateConnections, connectGenericWebhook } from '../../helpers/backend_helper';
+import { listConnections, deleteConnection, deleteIndiamartConnection, deleteZohoConnection, deleteGenericWebhookConnection, deletePhoneContactConnection, deleteTypeformConnection, pullIndiamartLeads, pullZohoLeads, updateConnections, connectGenericWebhook, connectPhoneContact } from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import LogsModal from './LogsModal';
@@ -115,6 +115,12 @@ const LeadSources = (props) => {
   const [webhookResult, setWebhookResult] = useState(null);
   const [webhookError, setWebhookError] = useState('');
   const [webhookCopied, setWebhookCopied] = useState(false);
+
+  // Phone Contact creation modal state
+  const [phoneModalOpen, setPhoneModalOpen] = useState(false);
+  const [phoneName, setPhoneName] = useState('');
+  const [phoneCreating, setPhoneCreating] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
 
   // Installed connections state
   const [connections, setConnections] = useState([]);
@@ -348,6 +354,10 @@ const LeadSources = (props) => {
       await deleteZohoConnection(id);
     } else if (provider === 'generic_webhook' || provider === 'genericWebhook' || provider === 'webhook') {
       await deleteGenericWebhookConnection(id);
+    } else if (provider === 'phone_contact' || provider === 'phoneContact') {
+      await deletePhoneContactConnection(id);
+    } else if (provider === 'typeform') {
+      await deleteTypeformConnection(id);
     } else {
       await deleteConnection(id);
     }
@@ -415,6 +425,41 @@ const LeadSources = (props) => {
         setWebhookModalOpen(true);
         break;
       }
+      case 'phoneContact': {
+        setPhoneName('');
+        setPhoneError('');
+        setPhoneModalOpen(true);
+        break;
+      }
+      case 'typeform': {
+        const token = await getSessionToken({leadSourceId: 'typeform'});
+        const typeformUrl = `https://oauth.automationsbuilder.com/typeform-session?token=${token?.session}`;
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const popup = window.open(typeformUrl, 'typeform-connect', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+        const handleMessage = (event) => {
+          if (event.data?.type === 'typeform_connect') {
+            window.removeEventListener('message', handleMessage);
+            if (popup && !popup.closed) popup.close();
+            if (event.data.status === 'success') {
+              fetchConnections(currentPage);
+            }
+          }
+        };
+        window.addEventListener('message', handleMessage);
+        if (popup) {
+          const pollTimer = setInterval(() => {
+            if (popup.closed) {
+              clearInterval(pollTimer);
+              window.removeEventListener('message', handleMessage);
+              fetchConnections(currentPage);
+            }
+          }, 500);
+        }
+        break;
+      }
       default: {
         const { icon, ...sourceData } = source;
         history.push('/settings/' + source.key, { source: sourceData });
@@ -451,6 +496,24 @@ const LeadSources = (props) => {
       setWebhookCopied(true);
       setTimeout(() => setWebhookCopied(false), 2000);
     });
+  };
+
+  const handleCreatePhoneContact = async () => {
+    if (!phoneName.trim()) {
+      setPhoneError('Please enter a connection name.');
+      return;
+    }
+    setPhoneCreating(true);
+    setPhoneError('');
+    try {
+      await connectPhoneContact({ name: phoneName.trim() });
+      setPhoneModalOpen(false);
+      fetchConnections(currentPage);
+    } catch (err) {
+      setPhoneError(err?.msg || err?.response?.data?.msg || 'Failed to create phone contact connection.');
+    } finally {
+      setPhoneCreating(false);
+    }
   };
 
   return (
@@ -739,6 +802,51 @@ const LeadSources = (props) => {
             connection={selectedConnection}
             onConfirm={handleDeleteConfirm}
           />
+
+          {/* Phone Contact Creation Modal */}
+          <Modal isOpen={phoneModalOpen} toggle={() => setPhoneModalOpen(false)} size='md' centered>
+            <ModalHeader toggle={() => setPhoneModalOpen(false)}>
+              <div className='d-flex align-items-center gap-2'>
+                <ImMobile style={{ color: '#f59e0b' }} />
+                <span>Create Phone Contact Connection</span>
+              </div>
+            </ModalHeader>
+            <ModalBody>
+              {phoneError && (
+                <Alert color='danger' className='mb-3' style={{ fontSize: '0.85rem' }} toggle={() => setPhoneError('')}>
+                  {phoneError}
+                </Alert>
+              )}
+              <div className='mb-3'>
+                <label className='form-label fw-medium'>Connection Name <span className='text-danger'>*</span></label>
+                <input
+                  type='text'
+                  className='form-control'
+                  placeholder='e.g. My Phone Contacts'
+                  value={phoneName}
+                  onChange={(e) => setPhoneName(e.target.value)}
+                />
+              </div>
+              <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  After creating the connection, use the Configure button to upload a VCF file or sync contacts via JSON.
+                </p>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <button className='btn btn-sm btn-soft-danger' onClick={() => setPhoneModalOpen(false)}>
+                Cancel
+              </button>
+              <button
+                className='btn btn-sm btn-primary d-flex align-items-center gap-2'
+                onClick={handleCreatePhoneContact}
+                disabled={phoneCreating || !phoneName.trim()}
+              >
+                {phoneCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
+                <span>{phoneCreating ? 'Creating...' : 'Create Connection'}</span>
+              </button>
+            </ModalFooter>
+          </Modal>
 
           {/* Generic Webhook Creation Modal */}
           <Modal isOpen={webhookModalOpen} toggle={() => { setWebhookModalOpen(false); setWebhookResult(null); }} size='md' centered>

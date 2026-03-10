@@ -205,6 +205,103 @@ const SOURCE_DOCS = {
       'Detailed logs for monitoring and debugging',
     ],
   },
+  typeform: {
+    title: 'Typeform',
+    description: 'Connect Typeform to capture form responses as leads. Two methods available: OAuth (automatic) or Custom Webhook (manual setup via Typeform settings).',
+    videoUrl: null,
+    steps: [
+      {
+        title: 'Click "Create Connection"',
+        description: 'Find the Typeform card in Lead Sources and click "Create Connection". A popup window will open for Typeform OAuth authentication.',
+        image: '/leadsource/assets/leadsource/typeform_connect.png',
+      },
+      {
+        title: 'Authorize the Application (OAuth)',
+        description: 'In the Typeform popup, review the permissions requested and click "Allow" to authorize the app. The popup will close automatically after successful authorization.',
+        image: '/leadsource/assets/leadsource/typeform_oauth.png',
+        tip: 'Make sure you are logged in to the correct Typeform account before authorizing.',
+      },
+      {
+        title: 'Select a Form',
+        description: 'Open Configure on your connection card. Choose the Typeform form you want to capture responses from using the dropdown, then click "Save Selection". A webhook is automatically registered on the selected form.',
+        image: '/leadsource/assets/leadsource/typeform_select_form.png',
+        tip: 'A webhook is automatically registered on the selected form to receive real-time responses.',
+      },
+      {
+        title: 'Set Up Field Mapping',
+        description: 'Open Field Mapping to map your Typeform form fields to your CRM fields. This ensures each response field (name, email, phone, etc.) is stored correctly in the right CRM field.',
+        image: '/leadsource/assets/leadsource/typeform_fieldmapping.png',
+      },
+      {
+        title: 'Add Outbound Webhooks (Optional)',
+        description: 'Navigate to Webhooks to add additional outbound webhook URLs that receive real-time notifications when new Typeform responses arrive.',
+        image: '/leadsource/assets/leadsource/typeform_webhook.png',
+      },
+      {
+        title: 'View Logs & Monitor',
+        description: 'Use the Logs section to monitor all captured responses. Each log entry shows the source, status, payload data, and timestamp for easy debugging.',
+        image: '/leadsource/assets/leadsource/typeform_logs.png',
+      },
+    ],
+    features: [
+      'Two connection methods: OAuth or Custom Webhook',
+      'Secure OAuth 2.0 connection with Typeform',
+      'Auto-register webhook on selected form (OAuth)',
+      'Manual webhook setup via Typeform settings (Custom)',
+      'Capture form responses in real-time',
+      'Map Typeform fields to CRM fields',
+      'Auto-cleanup webhook on disconnection',
+      'Detailed response logs for monitoring',
+    ],
+  },
+  phoneContact: {
+    title: 'Phone Contact',
+    description: 'Import contacts from your phone by uploading a VCF/vCard file or syncing directly via JSON from your mobile app.',
+    videoUrl: null,
+    steps: [
+      {
+        title: 'Create a Connection',
+        description: 'Find the Phone Contact card in Lead Sources and click "Create Connection". Enter a name for your connection (e.g. "My Phone Contacts").',
+        image: '/leadsource/assets/leadsource/phone_connect.png',
+      },
+      {
+        title: 'Export Contacts from Phone',
+        description: 'On your phone, go to Contacts and export all contacts as a .vcf (vCard) file. On Android: Contacts > Settings > Export. On iPhone: use iCloud or a contacts export app.',
+        image: '/leadsource/assets/leadsource/phone_export.png',
+        tip: 'Most phones support exporting all contacts as a single .vcf file. Check your phone\'s Contacts settings.',
+      },
+      {
+        title: 'Upload VCF File',
+        description: 'Open Configure on your connection card, select the "Upload VCF File" tab, choose your .vcf file, and click "Upload & Import". The system will parse and import all contacts automatically.',
+        image: '/leadsource/assets/leadsource/phone_upload.png',
+      },
+      {
+        title: 'Or Sync via JSON (Mobile App)',
+        description: 'For mobile app integrations, switch to the "JSON Sync" tab and paste a JSON array of contacts, or use the API endpoint to POST contacts directly from your app.',
+        image: '/leadsource/assets/leadsource/phone_json.png',
+        tip: 'Use the upload-json API endpoint for automated syncing from mobile apps.',
+      },
+      {
+        title: 'Set Up Field Mapping',
+        description: 'Open Field Mapping to map phone contact fields (name, phone, email) to your CRM fields. Toggle "Auto-create Contact" to automatically create CRM contacts for each imported lead.',
+        image: '/leadsource/assets/leadsource/phone_field_mapping.png',
+      },
+      {
+        title: 'View Logs',
+        description: 'Use the Logs section to monitor all imported contacts. Each log entry shows the status, payload data, and import timestamp.',
+        image: '/leadsource/assets/leadsource/phone_logs.png',
+      },
+    ],
+    features: [
+      'Import contacts via VCF/vCard file upload',
+      'Direct JSON sync for mobile app integration',
+      'Pre-signed S3 upload for secure file transfer',
+      'Auto-parse VCF files and extract contact data',
+      'Map phone fields to CRM fields',
+      'Auto-create CRM contacts on import',
+      'Detailed import logs for tracking',
+    ],
+  },
 };
 
 /**

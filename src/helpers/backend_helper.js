@@ -336,6 +336,24 @@ export const getGenericWebhookConnection = (id) => leadsourceApi.get(`${lsUrl.GE
 export const deleteGenericWebhookConnection = (id) => leadsourceApi.delete(`${lsUrl.GENERIC_WEBHOOK_DELETE}/${id}/delete-connection`);
 export const getGenericWebhookFieldList = (connectionId) => leadsourceApi.get(`${lsUrl.GENERIC_WEBHOOK_GET_FIELD_LIST}?connectionId=${connectionId}`);
 
+// Phone Contact
+export const connectPhoneContact = (data) => leadsourceApi.create(lsUrl.PHONE_CONTACT_CONNECT, data);
+export const getPhoneContactConnection = (id) => leadsourceApi.get(`${lsUrl.PHONE_CONTACT_CONNECTION}/${id}`);
+export const deletePhoneContactConnection = (id) => leadsourceApi.delete(`${lsUrl.PHONE_CONTACT_DELETE}/${id}/delete-connection`);
+export const getPhoneContactFieldList = () => leadsourceApi.get(lsUrl.PHONE_CONTACT_GET_FIELD_LIST);
+export const getPhoneContactUploadUrl = (id) => leadsourceApi.get(`${lsUrl.PHONE_CONTACT_UPLOAD_URL}/${id}`);
+export const processPhoneContactFile = (id) => leadsourceApi.create(`${lsUrl.PHONE_CONTACT_PROCESS_FILE}/${id}`);
+export const uploadPhoneContactJson = (id, data) => leadsourceApi.create(`${lsUrl.PHONE_CONTACT_UPLOAD_JSON}/${id}`, data);
+
+// Typeform
+export const getTypeformConnectUrl = () => leadsourceApi.get(lsUrl.TYPEFORM_CONNECT);
+export const getTypeformForms = (connectionId) => leadsourceApi.get(`${lsUrl.TYPEFORM_FORMS}?connectionId=${connectionId}`);
+export const saveTypeformSelection = (data) => leadsourceApi.create(lsUrl.TYPEFORM_SAVE_SELECTION, data);
+export const getTypeformConnection = (id) => leadsourceApi.get(`${lsUrl.TYPEFORM_CONNECTION}/${id}`);
+export const getTypeformFieldList = (connectionId) => leadsourceApi.get(`${lsUrl.TYPEFORM_GET_FIELD_LIST}?connectionId=${connectionId}`);
+export const deleteTypeformConnection = (id) => leadsourceApi.delete(`${lsUrl.TYPEFORM_DELETE}/${id}/delete-selection`);
+export const connectTypeformWebhook = (data) => leadsourceApi.create(lsUrl.TYPEFORM_WEBHOOK_CONNECT, data);
+
 export const getCrmFields = (data) => api.get(lsUrl.CRM_FIELDS, data);
 export const getFieldMappings = (connectionId) => leadsourceApi.get(`${lsUrl.FIELD_MAPPING}/${connectionId}`);
 export const upsertFieldMappings = (data) => leadsourceApi.create(lsUrl.FIELD_MAPPING_UPSERT, data);

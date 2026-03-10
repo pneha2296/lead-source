@@ -5,6 +5,8 @@ import FacebookConfigForm from './ConfigForms/FacebookConfigForm';
 import IndiamartConfigForm from './ConfigForms/IndiamartConfigForm';
 import ZohoConfigForm from './ConfigForms/ZohoConfigForm';
 import GenericWebhookConfigForm from './ConfigForms/GenericWebhookConfigForm';
+import PhoneContactConfigForm from './ConfigForms/PhoneContactConfigForm';
+import TypeformConfigForm from './ConfigForms/TypeformConfigForm';
 
 const getProvider = (connection) =>
   connection?.provider || connection?.source || '';
@@ -18,11 +20,13 @@ const PROVIDER_FORM_MAP = {
   generic_webhook: GenericWebhookConfigForm,
   genericWebhook: GenericWebhookConfigForm,
   webhook: GenericWebhookConfigForm,
+  phone_connect: PhoneContactConfigForm,
+  typeform: TypeformConfigForm,
 };
 
 const ConfigureModal = ({ isOpen, toggle, connection, onSave }) => {
   if (!connection) return null;
-
+  
   const FormComponent = PROVIDER_FORM_MAP[getProvider(connection)] || FacebookConfigForm;
 
   return (

@@ -13,7 +13,7 @@ import { BiLink, BiUnlink } from 'react-icons/bi';
 import { IoMdClose } from 'react-icons/io';
 import { FiSearch } from 'react-icons/fi';
 import { HiOutlineUserAdd } from 'react-icons/hi';
-import { getCrmFields, getFieldMappings, upsertFieldMappings, getFacebookForms, getFacebookPages, getIndiamartFieldList, getZohoFieldList, getGenericWebhookFieldList } from '../../helpers/backend_helper';
+import { getCrmFields, getFieldMappings, upsertFieldMappings, getFacebookForms, getFacebookPages, getIndiamartFieldList, getZohoFieldList, getGenericWebhookFieldList, getPhoneContactFieldList, getTypeformFieldList } from '../../helpers/backend_helper';
 
 // --- Provider-specific form field fetchers ---
 // Each fetcher returns a Promise that resolves to an array of { key, name/label } objects.
@@ -65,6 +65,34 @@ const PROVIDER_FIELD_FETCHERS = {
   },
   webhook: async (connection) => {
     const res = await getGenericWebhookFieldList(connection._id || connection.id);
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+
+  // Phone Contact: GET call, response is { formFields: { KEY: "label", ... } }
+  phone_contact: async () => {
+    const res = await getPhoneContactFieldList();
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+  phoneContact: async () => {
+    const res = await getPhoneContactFieldList();
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+
+  // Typeform: GET call, response is { formFields: { KEY: "label", ... } }
+  typeform: async (connection) => {
+    const res = await getTypeformFieldList(connection._id || connection.id);
     const fieldsObj = res?.formFields || res?.data?.formFields || {};
     if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
       return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
