@@ -6,6 +6,7 @@ const Workspace = () => {
     return <Preloader />;
     return <></>;
   } else {
+    window.location.href = `${window.location.origin}/leadsource/settings`;
     return <></>;
   }
 };
