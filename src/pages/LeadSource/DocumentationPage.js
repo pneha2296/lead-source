@@ -14,7 +14,7 @@ import { BsPlayCircle } from 'react-icons/bs';
 
 //source icons
 import { FaMeta } from 'react-icons/fa6';
-import { MdOutlineWebhook } from 'react-icons/md';
+import { MdOutlineWebhook, MdOutlineNoteAlt } from 'react-icons/md';
 import { SiGoogleads, SiLinkedin, SiTypeform, SiGoogleforms, SiZoho } from 'react-icons/si';
 import { CgWebsite } from 'react-icons/cg';
 import { ImMobile } from 'react-icons/im';
@@ -208,6 +208,33 @@ const DocumentationPage = () => {
                   {steps[activeStep].description}
                 </p>
 
+                
+                {/* Step Note */}
+                {steps[activeStep].note && (
+                  <div
+                    className='d-flex align-items-start gap-2 mt-4 p-3 rounded'
+                    style={{ backgroundColor: '#f0d4da', border: '1px solid #D2042D' }}
+                  >
+                    <MdOutlineNoteAlt style={{ color: '#D2042D', fontSize: '1.2rem', flexShrink: 0, marginTop: '2px' }} />
+                    <span style={{ fontSize: '0.85rem', color: '#D2042D', lineHeight: '1.5' }}>
+                      {steps[activeStep].note}
+                    </span>
+                  </div>
+                )}
+
+                {/* Step Tip */}
+                {steps[activeStep].tip && (
+                  <div
+                    className='d-flex align-items-start gap-2 mt-4 p-3 rounded'
+                    style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
+                  >
+                    <HiOutlineLightBulb style={{ color: '#d97706', fontSize: '1.2rem', flexShrink: 0, marginTop: '2px' }} />
+                    <span style={{ fontSize: '0.85rem', color: '#92400e', lineHeight: '1.5' }}>
+                      {steps[activeStep].tip}
+                    </span>
+                  </div>
+                )}
+
                 {/* Step Image */}
                 {steps[activeStep].image && (
                   <div className='mt-4'>
@@ -244,19 +271,6 @@ const DocumentationPage = () => {
                         }}
                       />
                     )}
-                  </div>
-                )}
-
-                {/* Step Tip */}
-                {steps[activeStep].tip && (
-                  <div
-                    className='d-flex align-items-start gap-2 mt-4 p-3 rounded'
-                    style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
-                  >
-                    <HiOutlineLightBulb style={{ color: '#d97706', fontSize: '1.2rem', flexShrink: 0, marginTop: '2px' }} />
-                    <span style={{ fontSize: '0.85rem', color: '#92400e', lineHeight: '1.5' }}>
-                      {steps[activeStep].tip}
-                    </span>
                   </div>
                 )}
 

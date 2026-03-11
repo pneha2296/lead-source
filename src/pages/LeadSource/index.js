@@ -19,7 +19,7 @@ import {
 import BreadCrumb from '../../Components/Common/BreadCrumb';
 import MetaTag from '../../Components/Common/Meta';
 import { useHistory } from 'react-router-dom';
-import { listConnections, deleteConnection, deleteIndiamartConnection, deleteZohoConnection, deleteGenericWebhookConnection, deletePhoneContactConnection, deleteTypeformConnection, deleteGoogleFormsConnection, pullIndiamartLeads, pullZohoLeads, updateConnections, connectGenericWebhook, connectPhoneContact, connectGoogleForms } from '../../helpers/backend_helper';
+import { listConnections, deleteConnection, deleteIndiamartConnection, deleteZohoConnection, deleteGenericWebhookConnection, deletePhoneContactConnection, deleteTypeformConnection, deleteGoogleFormsConnection, pullIndiamartLeads, pullZohoLeads, updateConnections, connectGenericWebhook, connectPhoneContact, connectGoogleForms, getGoogleFormsAppsScript } from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import LogsModal from './LogsModal';
@@ -545,7 +545,21 @@ const LeadSources = (props) => {
     setGoogleFormsError('');
     try {
       const res = await connectGoogleForms({ name: googleFormsName.trim() });
-      setGoogleFormsResult(res.data || res);
+      const connectionData = res.data || res;
+      const connectionId = connectionData?._id || connectionData?.id || connectionData?.connectionId;
+
+      // Fetch Apps Script code using the new connection ID
+      let appsScript = connectionData?.appsScript || '';
+      if (!appsScript && connectionId) {
+        try {
+          const scriptRes = await getGoogleFormsAppsScript(connectionId);
+          appsScript = scriptRes?.data?.script || scriptRes?.script || scriptRes?.data?.appsScript || scriptRes?.appsScript || '';
+        } catch (e) {
+          console.error('Failed to fetch Apps Script:', e);
+        }
+      }
+
+      setGoogleFormsResult({ ...connectionData, appsScript });
       fetchConnections(currentPage);
     } catch (err) {
       setGoogleFormsError(err?.msg || err?.response?.data?.msg || 'Failed to create Google Forms connection.');

@@ -254,6 +254,71 @@ const SOURCE_DOCS = {
       'Detailed response logs for monitoring',
     ],
   },
+  googleForm: {
+    title: 'Google Forms',
+    description: 'Connect Google Forms to automatically capture form responses as leads using a simple Apps Script integration.',
+    videoUrl: null,
+    steps: [
+      {
+        title: 'Create a Connection',
+        description: 'Find the Google Form card in Lead Sources and click "Create Connection". Enter a name for your connection (e.g. "Contact Form Leads").',
+        image: '/leadsource/assets/leadsource/google_form_connect.png',
+      },
+      {
+        title: 'Copy the Apps Script',
+        description: 'After creation, you will see a webhook URL and a ready-to-use Google Apps Script code. Click "Copy Script" to copy the script to your clipboard.',
+        image: '/leadsource/assets/leadsource/google_form_script.png',
+        tip: 'Keep your webhook URL private. Anyone with the URL can send leads to your account.',
+      },
+      {
+        title: 'Open Google Forms Script Editor',
+        description: 'Open your Google Form in edit mode. Click the three-dot menu (More options) at the top-right corner, then select "Script editor". This opens the Google Apps Script editor for your form.',
+        image: '/leadsource/assets/leadsource/google_form_create_app_script.png',
+      },
+      {
+        title: 'Paste the Apps Script',
+        description: 'In the Script editor, select all the default code and replace it with the Apps Script you copied. Click the Save icon (or press Ctrl+S) to save the script.',
+        image: '/leadsource/assets/leadsource/google_form_add_script.png',
+        tip: 'Make sure to replace ALL the default code — do not append it at the bottom.',
+      },
+      {
+        title: 'Set Up the Trigger',
+        description: 'In the Script editor, click the clock icon (Triggers) in the left sidebar. Click "+ Add Trigger", set the function to "onFormSubmit", the event source to "From form", and the event type to "On form submit". Click Save and authorize the script when prompted.\nYou only need to set up the trigger once. It will automatically fire for every new form submission.',
+        image: [
+          '/leadsource/assets/leadsource/google_form_trigger.png', 
+          '/leadsource/assets/leadsource/google_form_add_new_trigger.png',
+          '/leadsource/assets/leadsource/google_form_trigger_setting.png'
+        ],
+        note: 'You may need to authorize the script to run when you first set up the trigger.'
+      },
+      {
+        title: 'Set Up Field Mapping',
+        description: 'Back in Lead Sources, open Field Mapping on your Google Forms connection card. Map the Google Form question fields to your CRM fields. Toggle "Auto-create Contact" to automatically create CRM contacts for each form response.',
+        image: '/leadsource/assets/leadsource/google_form_fieldmapping.png',
+        note: 'You need to send example data to get form field names for the field mapping.',
+      },
+      {
+        title: 'Add Webhooks (Optional)',
+        description: 'Navigate to Webhooks on your connection card to add outbound webhook URLs. These will receive real-time notifications when a new Google Forms response is captured as a lead.',
+        image: '/leadsource/assets/leadsource/google_form_webhook.png',
+      },
+      {
+        title: 'View Logs & Monitor',
+        description: 'Use the Logs section to monitor all captured form responses. Each log entry shows the source, status, payload data, and timestamp for easy debugging.',
+        image: '/leadsource/assets/leadsource/google_form_logs.png',
+      },
+    ],
+    features: [
+      'Simple Apps Script integration — no OAuth required',
+      'Auto-detect form fields from incoming responses',
+      'Capture form responses in real-time',
+      'Map Google Form fields to CRM fields',
+      'Auto-create CRM contacts on new submissions',
+      'Forward leads to outbound webhooks',
+      'Detailed response logs for monitoring',
+      'Works with any Google Form',
+    ],
+  },
   phoneContact: {
     title: 'Phone Contact',
     description: 'Import contacts from your phone by uploading a VCF/vCard file or syncing directly via JSON from your mobile app.',
