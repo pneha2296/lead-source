@@ -19,7 +19,23 @@ import {
 import BreadCrumb from '../../Components/Common/BreadCrumb';
 import MetaTag from '../../Components/Common/Meta';
 import { useHistory } from 'react-router-dom';
-import { listConnections, deleteConnection, deleteIndiamartConnection, deleteZohoConnection, deleteGenericWebhookConnection, deletePhoneContactConnection, deleteTypeformConnection, deleteGoogleFormsConnection, pullIndiamartLeads, pullZohoLeads, updateConnections, connectGenericWebhook, connectPhoneContact, connectGoogleForms, getGoogleFormsAppsScript } from '../../helpers/backend_helper';
+import {
+  listConnections,
+  deleteConnection,
+  deleteIndiamartConnection,
+  deleteZohoConnection,
+  deleteGenericWebhookConnection,
+  deletePhoneContactConnection,
+  deleteTypeformConnection,
+  deleteGoogleFormsConnection,
+  pullIndiamartLeads,
+  pullZohoLeads,
+  updateConnections,
+  connectGenericWebhook,
+  connectPhoneContact,
+  connectGoogleForms,
+  getGoogleFormsAppsScript,
+} from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import LogsModal from './LogsModal';
@@ -86,10 +102,7 @@ const sourceIconMap = {
 };
 
 const getSourceIcon = (connection) => {
-  return sourceIconMap[connection.provider]
-    || sourceIconMap[connection.source]
-    || sourceIconMap[connection.key]
-    || <BsGearWideConnected />;
+  return sourceIconMap[connection.provider] || sourceIconMap[connection.source] || sourceIconMap[connection.key] || <BsGearWideConnected />;
 };
 
 const LeadSources = (props) => {
@@ -147,9 +160,7 @@ const LeadSources = (props) => {
     listConnections({ page, limit: 20 })
       .then((response) => {
         setConnections(response.data || []);
-        setPagination(
-          response.pagination || { total: 0, page, limit: 20, totalPages: 0 },
-        );
+        setPagination(response.pagination || { total: 0, page, limit: 20, totalPages: 0 });
       })
       .catch((err) => {
         console.error('Failed to fetch connections:', err);
@@ -311,8 +322,7 @@ const LeadSources = (props) => {
   const filterSources = (sources) => {
     return sources.filter(
       (source) =>
-        source.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        source.description.toLowerCase().includes(searchTerm.toLowerCase()),
+        source.name.toLowerCase().includes(searchTerm.toLowerCase()) || source.description.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   };
 
@@ -384,15 +394,18 @@ const LeadSources = (props) => {
   };
 
   async function handleCreateNewConnection(source) {
+    setLoading(true);
     switch (source.key) {
       case 'facebookLeadAds': {
-        const token = await getSessionToken({leadSourceId: 'facebook_leadgen'});
+        const token = await getSessionToken({ leadSourceId: 'facebook_leadgen' });
+        setLoading(false);
         setModalUrl(`https://oauth.automationsbuilder.com/lead-session?token=${token?.session}`);
         setShowModal(true);
         break;
       }
       case 'zohoCrm': {
-        const token = await getSessionToken({leadSourceId: 'zoho_crm'});
+        const token = await getSessionToken({ leadSourceId: 'zoho_crm' });
+        setLoading(false);
         const zohoUrl = `https://oauth.automationsbuilder.com/zoho-session?token=${token?.session}`;
         const width = 600;
         const height = 700;
@@ -444,13 +457,18 @@ const LeadSources = (props) => {
         break;
       }
       case 'typeform': {
-        const token = await getSessionToken({leadSourceId: 'typeform'});
+        const token = await getSessionToken({ leadSourceId: 'typeform' });
+        setLoading(false);
         const typeformUrl = `https://oauth.automationsbuilder.com/typeform-session?token=${token?.session}`;
         const width = 600;
         const height = 700;
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
-        const popup = window.open(typeformUrl, 'typeform-connect', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+        const popup = window.open(
+          typeformUrl,
+          'typeform-connect',
+          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`,
+        );
         const handleMessage = (event) => {
           if (event.data?.type === 'typeform_connect') {
             window.removeEventListener('message', handleMessage);
@@ -669,8 +687,7 @@ const LeadSources = (props) => {
                   {pagination.totalPages > 1 && (
                     <div className='d-flex justify-content-between align-items-center mt-4'>
                       <p className='text-muted mb-0' style={{ fontSize: '0.85rem' }}>
-                        Showing {(currentPage - 1) * pagination.limit + 1} -{' '}
-                        {Math.min(currentPage * pagination.limit, pagination.total)} of{' '}
+                        Showing {(currentPage - 1) * pagination.limit + 1} - {Math.min(currentPage * pagination.limit, pagination.total)} of{' '}
                         {pagination.total} connections
                       </p>
                       <ul className='pagination pagination-sm mb-0'>
@@ -817,8 +834,8 @@ const LeadSources = (props) => {
                                 <FaYoutube />
                                 <span>Tutorial</span>
                               </DropdownItem>
-                              <DropdownItem 
-                                className='dropdown-item d-flex align-items-center gap-2' 
+                              <DropdownItem
+                                className='dropdown-item d-flex align-items-center gap-2'
                                 href='#'
                                 onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
                               >
@@ -838,7 +855,10 @@ const LeadSources = (props) => {
           {/* Configure Modal */}
           <ConfigureModal
             isOpen={configureOpen}
-            toggle={() => { setConfigureOpen(false); setSelectedConnection(null); }}
+            toggle={() => {
+              setConfigureOpen(false);
+              setSelectedConnection(null);
+            }}
             connection={selectedConnection}
             onSave={handleConfigureSave}
           />
@@ -846,21 +866,30 @@ const LeadSources = (props) => {
           {/* Field Mapping Modal */}
           <FieldMappingModal
             isOpen={mappingOpen}
-            toggle={() => { setMappingOpen(false); setSelectedConnection(null); }}
+            toggle={() => {
+              setMappingOpen(false);
+              setSelectedConnection(null);
+            }}
             connection={selectedConnection}
           />
 
           {/* Logs Modal */}
           <LogsModal
             isOpen={logsOpen}
-            toggle={() => { setLogsOpen(false); setSelectedConnection(null); }}
+            toggle={() => {
+              setLogsOpen(false);
+              setSelectedConnection(null);
+            }}
             connection={selectedConnection}
           />
 
           {/* Delete Confirm Modal */}
           <DeleteConfirmModal
             isOpen={deleteOpen}
-            toggle={() => { setDeleteOpen(false); setSelectedConnection(null); }}
+            toggle={() => {
+              setDeleteOpen(false);
+              setSelectedConnection(null);
+            }}
             connection={selectedConnection}
             onConfirm={handleDeleteConfirm}
           />
@@ -880,7 +909,9 @@ const LeadSources = (props) => {
                 </Alert>
               )}
               <div className='mb-3'>
-                <label className='form-label fw-medium'>Connection Name <span className='text-danger'>*</span></label>
+                <label className='form-label fw-medium'>
+                  Connection Name <span className='text-danger'>*</span>
+                </label>
                 <input
                   type='text'
                   className='form-control'
@@ -911,8 +942,21 @@ const LeadSources = (props) => {
           </Modal>
 
           {/* Generic Webhook Creation Modal */}
-          <Modal isOpen={webhookModalOpen} toggle={() => { setWebhookModalOpen(false); setWebhookResult(null); }} size='md' centered>
-            <ModalHeader toggle={() => { setWebhookModalOpen(false); setWebhookResult(null); }}>
+          <Modal
+            isOpen={webhookModalOpen}
+            toggle={() => {
+              setWebhookModalOpen(false);
+              setWebhookResult(null);
+            }}
+            size='md'
+            centered
+          >
+            <ModalHeader
+              toggle={() => {
+                setWebhookModalOpen(false);
+                setWebhookResult(null);
+              }}
+            >
               <div className='d-flex align-items-center gap-2'>
                 <MdOutlineWebhook style={{ color: '#6366f1' }} />
                 <span>Create Webhook Connection</span>
@@ -975,7 +1019,7 @@ const LeadSources = (props) => {
                         whiteSpace: 'pre-wrap',
                       }}
                     >
-{`POST ${webhookResult.webhookUrl}
+                      {`POST ${webhookResult.webhookUrl}
 Content-Type: application/json
 
 {
@@ -989,7 +1033,9 @@ Content-Type: application/json
               ) : (
                 <>
                   <div className='mb-3'>
-                    <label className='form-label fw-medium'>Connection Name <span className='text-danger'>*</span></label>
+                    <label className='form-label fw-medium'>
+                      Connection Name <span className='text-danger'>*</span>
+                    </label>
                     <input
                       type='text'
                       className='form-control'
@@ -999,7 +1045,9 @@ Content-Type: application/json
                     />
                   </div>
                   <div className='mb-3'>
-                    <label className='form-label fw-medium'>Type <span className='text-muted fw-normal'>(optional)</span></label>
+                    <label className='form-label fw-medium'>
+                      Type <span className='text-muted fw-normal'>(optional)</span>
+                    </label>
                     <input
                       type='text'
                       className='form-control'
@@ -1007,16 +1055,20 @@ Content-Type: application/json
                       value={webhookType}
                       onChange={(e) => setWebhookType(e.target.value)}
                     />
-                    <small className='text-muted'>
-                      A label to identify the source type. Leave blank for "generic".
-                    </small>
+                    <small className='text-muted'>A label to identify the source type. Leave blank for "generic".</small>
                   </div>
                 </>
               )}
             </ModalBody>
             <ModalFooter>
               {webhookResult ? (
-                <button className='btn btn-sm btn-primary' onClick={() => { setWebhookModalOpen(false); setWebhookResult(null); }}>
+                <button
+                  className='btn btn-sm btn-primary'
+                  onClick={() => {
+                    setWebhookModalOpen(false);
+                    setWebhookResult(null);
+                  }}
+                >
                   Done
                 </button>
               ) : (
@@ -1038,8 +1090,21 @@ Content-Type: application/json
           </Modal>
 
           {/* Google Forms Creation Modal */}
-          <Modal isOpen={googleFormsModalOpen} toggle={() => { setGoogleFormsModalOpen(false); setGoogleFormsResult(null); }} size='md' centered>
-            <ModalHeader toggle={() => { setGoogleFormsModalOpen(false); setGoogleFormsResult(null); }}>
+          <Modal
+            isOpen={googleFormsModalOpen}
+            toggle={() => {
+              setGoogleFormsModalOpen(false);
+              setGoogleFormsResult(null);
+            }}
+            size='md'
+            centered
+          >
+            <ModalHeader
+              toggle={() => {
+                setGoogleFormsModalOpen(false);
+                setGoogleFormsResult(null);
+              }}
+            >
               <div className='d-flex align-items-center gap-2'>
                 <SiGoogleforms style={{ color: '#673ab7' }} />
                 <span>Create Google Forms Connection</span>
@@ -1140,7 +1205,9 @@ Content-Type: application/json
               ) : (
                 <>
                   <div className='mb-3'>
-                    <label className='form-label fw-medium'>Connection Name <span className='text-danger'>*</span></label>
+                    <label className='form-label fw-medium'>
+                      Connection Name <span className='text-danger'>*</span>
+                    </label>
                     <input
                       type='text'
                       className='form-control'
@@ -1151,7 +1218,8 @@ Content-Type: application/json
                   </div>
                   <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
                     <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                      After creating the connection, you will receive a webhook URL and an Apps Script code to paste into your Google Form's script editor.
+                      After creating the connection, you will receive a webhook URL and an Apps Script code to paste into your Google Form's
+                      script editor.
                     </p>
                   </div>
                 </>
@@ -1159,7 +1227,13 @@ Content-Type: application/json
             </ModalBody>
             <ModalFooter>
               {googleFormsResult ? (
-                <button className='btn btn-sm btn-primary' onClick={() => { setGoogleFormsModalOpen(false); setGoogleFormsResult(null); }}>
+                <button
+                  className='btn btn-sm btn-primary'
+                  onClick={() => {
+                    setGoogleFormsModalOpen(false);
+                    setGoogleFormsResult(null);
+                  }}
+                >
                   Done
                 </button>
               ) : (
