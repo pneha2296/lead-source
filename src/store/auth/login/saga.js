@@ -52,7 +52,7 @@ function* loginUser({ payload: { user, history } }) {
       }
       localStorage.setItem('authToken', response.token);
       yield put(loginSuccess(response));
-      window.location.href = '/dig/image';
+      window.location.href = '/leadsource/settings';
     } else {
       if (response.code === 'ERR_SESSION_11000') {
         sessionStorage.setItem('prev_session', JSON.stringify(response.session));
@@ -181,7 +181,7 @@ function* logoutUser() {
         }
         localStorage.setItem('authToken', response.token);
         yield put(loginSuccess(response));
-        window.location.href = '/dig/image';
+        window.location.href = '/leadsource/settings';
       } else {
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');

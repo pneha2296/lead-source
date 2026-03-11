@@ -18,7 +18,7 @@ export default [
     label: 'Payment Gateways',
     link: '/products/payment/gateway',
     parentId: 'payment',
-    icon: <SiAmazonapigateway className='fs-18' style={{ fill: 'currentColor' }} />,
+    icon: <FaFileInvoiceDollar className='fs-18' style={{ fill: 'currentColor' }} />,
     iconType: 'component',
     permissions: UserPermissions.NATIVE_PAYMENT.PAYMENT_GATEWAY,
   },

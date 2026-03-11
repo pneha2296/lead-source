@@ -11,13 +11,6 @@ const Logout = lazy(() => import('../pages/Authentication/Logout'));
 
 const NoAuth = lazy(() => import('./../pages/Error/NoAuth'));
 
-const storage= lazy(()=>import('../pages/Storage/StorageExplorer'));
-
-const CreditHistory = lazy(() => import('../pages/CreditHistory/CreditHistory'));
-
-// API Documentation
-const ApiDocs = lazy(() => import('../pages/ApiDocs/index'));
-
 // Lead Source
 const LeadSource = lazy(() => import('../pages/LeadSource/index'));
 const LeadSourceSetup = lazy(() => import('../pages/LeadSource/ConnectionSetup'));
@@ -27,34 +20,18 @@ const DocumentationPage = lazy(() => import('../pages/LeadSource/DocumentationPa
 import UserPermissions from './UserPermissions';
 
 const digRoute = [
-  { path: '/products', component: ProductsPage, permissions: UserPermissions.DIG.IMAGE_EXPERIENCE },
-  { path: '/workspace', component: WorkspacePage, permissions: UserPermissions.DIG.IMAGE_EXPERIENCE },
-  {
-    path: '/storage',
-    component: storage,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
-  },
-  {
-    path: '/credit-history',
-    component: CreditHistory,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
-  },
-  // API Documentation
-  {
-    path: '/api-docs',
-    component: ApiDocs,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
-  },
+  { path: '/products', component: ProductsPage, permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE },
+  { path: '/workspace', component: WorkspacePage, permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE },
   // Lead Source
   {
     path: '/settings',
     component: LeadSource,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
+    permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
   },
   {
     path: '/settings/:id/webhook',
     component: WebhookPage,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
+    permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
   },
   {
     path: '/settings/docs/:sourceKey',
@@ -64,8 +41,8 @@ const digRoute = [
   {
     path: '/settings/:sourceKey',
     component: LeadSourceSetup,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
-  }
+    permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
+  },
 ];
 
 const productPageRoute = [

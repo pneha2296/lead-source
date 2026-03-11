@@ -210,11 +210,20 @@ export default {
   ANALYTICS: {
     CRM: ['analytics.crm.ALL'],
   },
-DIG: {
+  DIG: {
     IMAGE_EXPERIENCE: ['dig.img_exp.ALL', 'dig.img_exp.READ', 'dig.img_exp.CREATE', 'dig.img_exp.UPDATE', 'dig.img_exp.DELETE'],
     PDF_EXPERIENCE: ['dig.pdf_exp.ALL', 'dig.pdf_exp.READ', 'dig.pdf_exp.CREATE', 'dig.pdf_exp.UPDATE', 'dig.pdf_exp.DELETE'],
     storage: ['dig.pdf_exp.ALL', 'dig.pdf_exp.READ', 'dig.pdf_exp.CREATE', 'dig.pdf_exp.UPDATE', 'dig.pdf_exp.DELETE'],
-},
+  },
+  LEAD_SOURCE: {
+    LEAD_SOURCE: [
+      'lead_source.sources.ALL',
+      'lead_source.sources.READ',
+      'lead_source.sources.CREATE',
+      'lead_source.sources.UPDATE',
+      'lead_source.sources.DELETE',
+    ],
+  },
   WIDGET: {
     WIDGET: [
       'chat_widget.widget.ALL',

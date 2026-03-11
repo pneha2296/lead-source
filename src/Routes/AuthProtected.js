@@ -124,7 +124,7 @@ const DIGRoute = (props) => {
   let pv = getProductVisibility();
 
   let waba = pv.filter((item) => {
-    if (!item.isCustom && item.isActive && item.hyperlink === '/products/dig') {
+    if (!item.isCustom && item.isActive && item.hyperlink === '/products/leadsource') {
       return item;
     }
   });
