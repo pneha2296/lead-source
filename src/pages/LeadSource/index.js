@@ -217,6 +217,7 @@ const LeadSources = (props) => {
       name: 'Facebook Lead Ads',
       key: 'facebookLeadAds',
       icon: <FaMeta />,
+      isConnectShow: true,
       description: 'Capture leads directly from Facebook ads',
     },
     {
@@ -224,6 +225,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Webhook',
       key: 'webhooks',
+      isConnectShow: true,
       icon: <MdOutlineWebhook />,
       description: 'Receive leads via custom webhook',
     },
@@ -232,6 +234,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Google Form',
       key: 'googleForm',
+      isConnectShow: true,
       icon: <SiGoogleforms />,
       description: 'Sync leads from Google Forms',
     },
@@ -240,6 +243,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'JotForm',
       key: 'jotForm',
+      isConnectShow: true,
       icon: <RiSurveyLine />,
       description: 'Capture leads from JotForm submissions',
     },
@@ -248,6 +252,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Typeform',
       key: 'typeform',
+      isConnectShow: true,
       icon: <SiTypeform />,
       description: 'Connect with Typeform responses',
     },
@@ -256,6 +261,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Google Ads',
       key: 'googleAds',
+      isConnectShow: false,
       icon: <SiGoogleads />,
       description: 'Import leads from Google Ads campaigns',
     },
@@ -264,6 +270,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'LinkedIn Lead Gen',
       key: 'linkedinLeadGen',
+      isConnectShow: false,
       icon: <SiLinkedin />,
       description: 'Capture LinkedIn sponsored leads',
     },
@@ -271,6 +278,7 @@ const LeadSources = (props) => {
       id: 7,
       version: '0.0.1',
       name: 'Landing Page',
+      isConnectShow: false,
       key: 'landingPage',
       icon: <CgWebsite />,
       description: 'Custom landing page forms',
@@ -280,6 +288,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Phone Contact',
       key: 'phoneContact',
+      isConnectShow: false,
       icon: <ImMobile />,
       description: 'Import leads from phone contacts',
     },
@@ -288,6 +297,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'OCR App',
       key: 'ocrApp',
+      isConnectShow: false,
       icon: <IoQrCodeOutline />,
       description: 'Scan and capture leads via OCR',
     },
@@ -296,6 +306,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Zoho CRM',
       key: 'zohoCrm',
+      isConnectShow: true,
       icon: <SiZoho />,
       description: 'Sync leads from Zoho CRM',
     },
@@ -304,6 +315,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Hubspot CRM',
       key: 'hubspotCrm',
+      isConnectShow: false,
       icon: <FaHubspot />,
       description: 'Sync leads from Hubspot CRM',
     },
@@ -312,6 +324,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Salesforce',
       key: 'salesforce',
+      isConnectShow: false,
       icon: <LiaSalesforce />,
       description: 'Sync leads from Salesforce',
     },
@@ -320,6 +333,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'India Mart',
       key: 'indiaMart',
+      isConnectShow: true,
       icon: <FaIndustry />,
       description: 'Capture leads from IndiaMART enquiries',
     },
@@ -328,6 +342,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Magic Bricks',
       key: 'magicBricks',
+      isConnectShow: false,
       icon: <BsBuildingsFill />,
       description: 'Capture real estate leads from MagicBricks',
     },
@@ -336,8 +351,18 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Zomato',
       key: 'zomato',
+      isConnectShow: false,
       icon: <MdRestaurant />,
       description: 'Import restaurant leads from Zomato',
+    },
+    {
+      id: 17,
+      version: '0.0.1',
+      name: 'Contact Form 7',
+      key: 'contactform7',
+      isConnectShow: false,
+      icon: <RiSurveyLine />,
+      description: 'Contact Form 7 wordpress plugin',
     },
   ];
 
@@ -871,38 +896,53 @@ const LeadSources = (props) => {
                           {source.description}
                         </p>
                         <div className='d-flex flex-wrap align-items-center gap-1'>
-                          <button
-                            className='btn btn-sm btn-outline-primary d-flex align-items-center gap-1 border border-dark-1'
-                            style={{ paddingTop: '6px', paddingBottom: '6px' }}
-                            onClick={() => handleCreateNewConnection(source)}
-                          >
-                            <BsGearWideConnected />
-                            <span>Create Connection</span>
-                          </button>
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              href='#'
-                              className='mx-0 px-2 d-flex align-items-center btn btn-sm btn-outline-primary gap-1 py-1 border border-dark-1'
-                              tag='button'
+                          {source.isConnectShow ? (
+                            <>
+                            <button
+                              className='btn btn-sm btn-outline-primary d-flex align-items-center gap-1 border border-dark-1'
+                              style={{ paddingTop: '6px', paddingBottom: '6px' }}
+                              onClick={() => handleCreateNewConnection(source)}
                             >
-                              <i className='bx bx-file fs-15 btn btn-sm m-0 p-0'></i>
-                              <span>Documentation</span>
-                            </DropdownToggle>
-                            <DropdownMenu className='dropdown-menu-end'>
-                              <DropdownItem className='dropdown-item d-flex align-items-center gap-2' href='#'>
-                                <FaYoutube />
-                                <span>Tutorial</span>
-                              </DropdownItem>
-                              <DropdownItem
-                                className='dropdown-item d-flex align-items-center gap-2'
+                              <BsGearWideConnected />
+                              <span>Create Connection</span>
+                            </button>
+                            <UncontrolledDropdown>
+                              <DropdownToggle
                                 href='#'
-                                onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
+                                className='mx-0 px-2 d-flex align-items-center btn btn-sm btn-outline-primary gap-1 py-1 border border-dark-1'
+                                tag='button'
                               >
-                                <FiExternalLink />
+                                <i className='bx bx-file fs-15 btn btn-sm m-0 p-0'></i>
                                 <span>Documentation</span>
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
+                              </DropdownToggle>
+                              <DropdownMenu className='dropdown-menu-end'>
+                                <DropdownItem className='dropdown-item d-flex align-items-center gap-2' href='#'>
+                                  <FaYoutube />
+                                  <span>Tutorial</span>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className='dropdown-item d-flex align-items-center gap-2'
+                                  href='#'
+                                  onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
+                                >
+                                  <FiExternalLink />
+                                  <span>Documentation</span>
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </>
+                          ) : (
+                            <div 
+                              className='text-muted fw-medium py-2'
+                              style={{ 
+                                fontSize: '0.85rem',
+                                letterSpacing: '0.5px',
+                                textTransform: 'uppercase'
+                              }}
+                            >
+                              Coming Soon
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1079,13 +1119,13 @@ const LeadSources = (props) => {
                       }}
                     >
                       {`POST ${webhookResult.webhookUrl}
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "555-1234"
-}`}
+                        Content-Type: application/json
+                        {
+                          "name": "John Doe",
+                          "email": "john@example.com",
+                          "phone": "555-1234"
+                        }`
+                      }
                     </pre>
                   </div>
                 </>
