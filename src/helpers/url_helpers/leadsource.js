@@ -48,6 +48,12 @@ export const JOTFORM_CONNECTION = '/api/auth/jotform/connection';
 export const JOTFORM_GET_FIELD_LIST = '/api/auth/jotform/get-field-list';
 export const JOTFORM_DELETE = '/api/auth/jotform';
 
+// Contact Form 7 APIs
+export const CONTACT_FORM_7_CONNECT = '/api/auth/contactform7/connect';
+export const CONTACT_FORM_7_CONNECTION = '/api/auth/contactform7/connection';
+export const CONTACT_FORM_7_GET_FIELD_LIST = '/api/auth/contactform7/get-field-list';
+export const CONTACT_FORM_7_DELETE = '/api/auth/contactform7';
+
 // Google Forms APIs
 export const GOOGLE_FORMS_CONNECT = '/api/auth/google_forms/connect';
 export const GOOGLE_FORMS_CONNECTION = '/api/auth/google_forms/connection';

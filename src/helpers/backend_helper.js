@@ -351,6 +351,12 @@ export const getJotFormConnection = (id) => leadsourceApi.get(`${lsUrl.JOTFORM_C
 export const getJotFormFieldList = (connectionId) => leadsourceApi.get(`${lsUrl.JOTFORM_GET_FIELD_LIST}?connectionId=${connectionId}`);
 export const deleteJotFormConnection = (id) => leadsourceApi.delete(`${lsUrl.JOTFORM_DELETE}/${id}/delete-connection`);
 
+// Contact Form 7
+export const connectContactForm7 = (data) => leadsourceApi.create(lsUrl.CONTACT_FORM_7_CONNECT, data);
+export const getContactForm7Connection = (id) => leadsourceApi.get(`${lsUrl.CONTACT_FORM_7_CONNECTION}/${id}`);
+export const getContactForm7FieldList = (connectionId) => leadsourceApi.get(`${lsUrl.CONTACT_FORM_7_GET_FIELD_LIST}?connectionId=${connectionId}`);
+export const deleteContactForm7Connection = (id) => leadsourceApi.delete(`${lsUrl.CONTACT_FORM_7_DELETE}/${id}/delete-connection`);
+
 // Google Forms
 export const connectGoogleForms = (data) => leadsourceApi.create(lsUrl.GOOGLE_FORMS_CONNECT, data);
 export const getGoogleFormsConnection = (id) => leadsourceApi.get(`${lsUrl.GOOGLE_FORMS_CONNECTION}/${id}`);

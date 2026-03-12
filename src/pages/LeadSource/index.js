@@ -15,28 +15,30 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-
+import { FcBusinessContact } from "react-icons/fc";
 import BreadCrumb from '../../Components/Common/BreadCrumb';
 import MetaTag from '../../Components/Common/Meta';
 import { useHistory } from 'react-router-dom';
 import {
-    listConnections, 
-    deleteConnection, 
-    deleteIndiamartConnection, 
-    deleteZohoConnection, 
-    deleteGenericWebhookConnection, 
-    deletePhoneContactConnection, 
-    deleteTypeformConnection, 
-    deleteGoogleFormsConnection, 
-    deleteJotFormConnection, 
-    pullIndiamartLeads, 
-    pullZohoLeads, 
-    updateConnections, 
-    connectGenericWebhook, 
-    connectPhoneContact, 
-    connectGoogleForms, 
-    getGoogleFormsAppsScript, 
-    connectJotForm 
+  listConnections,
+  deleteConnection,
+  deleteIndiamartConnection,
+  deleteZohoConnection,
+  deleteGenericWebhookConnection,
+  deletePhoneContactConnection,
+  deleteTypeformConnection,
+  deleteGoogleFormsConnection,
+  deleteJotFormConnection,
+  deleteContactForm7Connection,
+  pullIndiamartLeads,
+  pullZohoLeads,
+  updateConnections,
+  connectGenericWebhook,
+  connectPhoneContact,
+  connectGoogleForms,
+  getGoogleFormsAppsScript,
+  connectJotForm,
+  connectContactForm7
 } from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
@@ -91,6 +93,7 @@ const sourceIconMap = {
   genericWebhook: <MdOutlineWebhook />,
   jotForm: <RiSurveyLine />,
   jotform: <RiSurveyLine />,
+  contactform7: <FcBusinessContact />,
   // provider keys (returned from API)
   facebook_leadgen: <FaMeta />,
   google_forms: <SiGoogleforms />,
@@ -157,6 +160,14 @@ const LeadSources = (props) => {
   const [jotFormResult, setJotFormResult] = useState(null);
   const [jotFormError, setJotFormError] = useState('');
   const [jotFormCopied, setJotFormCopied] = useState(false);
+
+  // Contact Form 7 creation modal state
+  const [cf7ModalOpen, setCf7ModalOpen] = useState(false);
+  const [cf7Name, setCf7Name] = useState('');
+  const [cf7Creating, setCf7Creating] = useState(false);
+  const [cf7Result, setCf7Result] = useState(null);
+  const [cf7Error, setCf7Error] = useState('');
+  const [cf7Copied, setCf7Copied] = useState(false);
 
   // Installed connections state
   const [connections, setConnections] = useState([]);
@@ -360,9 +371,9 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Contact Form 7',
       key: 'contactform7',
-      isConnectShow: false,
-      icon: <RiSurveyLine />,
-      description: 'Contact Form 7 wordpress plugin',
+      isConnectShow: true,
+      icon: <FcBusinessContact />,
+      description: 'Capture leads from WordPress Contact Form 7',
     },
   ];
 
@@ -420,6 +431,8 @@ const LeadSources = (props) => {
       await deleteGoogleFormsConnection(id);
     } else if (provider === 'jotform' || provider === 'jotForm') {
       await deleteJotFormConnection(id);
+    } else if (provider === 'contact_form_7' || provider === 'contactform7') {
+      await deleteContactForm7Connection(id);
     } else {
       await deleteConnection(id);
     }
@@ -513,6 +526,14 @@ const LeadSources = (props) => {
         setJotFormModalOpen(true);
         break;
       }
+      case 'contactform7': {
+        setCf7Name('');
+        setCf7Error('');
+        setCf7Result(null);
+        setCf7Copied(false);
+        setCf7ModalOpen(true);
+        break;
+      }
       case 'typeform': {
         const token = await getSessionToken({ leadSourceId: 'typeform' });
         setLoading(false);
@@ -553,6 +574,7 @@ const LeadSources = (props) => {
         break;
       }
     }
+    setLoading(false);
   }
 
   const handleCreateWebhook = async () => {
@@ -677,6 +699,33 @@ const LeadSources = (props) => {
     navigator.clipboard.writeText(url).then(() => {
       setJotFormCopied(true);
       setTimeout(() => setJotFormCopied(false), 2000);
+    });
+  };
+
+  const handleCreateContactForm7 = async () => {
+    if (!cf7Name.trim()) {
+      setCf7Error('Please enter a connection name.');
+      return;
+    }
+    setCf7Creating(true);
+    setCf7Error('');
+    try {
+      const res = await connectContactForm7({ name: cf7Name.trim() });
+      setCf7Result(res.data || res);
+      fetchConnections(currentPage);
+    } catch (err) {
+      setCf7Error(err?.msg || err?.response?.data?.msg || 'Failed to create Contact Form 7 connection.');
+    } finally {
+      setCf7Creating(false);
+    }
+  };
+
+  const handleCopyCf7Url = () => {
+    const url = cf7Result?.webhookUrl;
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      setCf7Copied(true);
+      setTimeout(() => setCf7Copied(false), 2000);
     });
   };
 
@@ -898,43 +947,43 @@ const LeadSources = (props) => {
                         <div className='d-flex flex-wrap align-items-center gap-1'>
                           {source.isConnectShow ? (
                             <>
-                            <button
-                              className='btn btn-sm btn-outline-primary d-flex align-items-center gap-1 border border-dark-1'
-                              style={{ paddingTop: '6px', paddingBottom: '6px' }}
-                              onClick={() => handleCreateNewConnection(source)}
-                            >
-                              <BsGearWideConnected />
-                              <span>Create Connection</span>
-                            </button>
-                            <UncontrolledDropdown>
-                              <DropdownToggle
-                                href='#'
-                                className='mx-0 px-2 d-flex align-items-center btn btn-sm btn-outline-primary gap-1 py-1 border border-dark-1'
-                                tag='button'
+                              <button
+                                className='btn btn-sm btn-outline-primary d-flex align-items-center gap-1 border border-dark-1'
+                                style={{ paddingTop: '6px', paddingBottom: '6px' }}
+                                onClick={() => handleCreateNewConnection(source)}
                               >
-                                <i className='bx bx-file fs-15 btn btn-sm m-0 p-0'></i>
-                                <span>Documentation</span>
-                              </DropdownToggle>
-                              <DropdownMenu className='dropdown-menu-end'>
-                                <DropdownItem className='dropdown-item d-flex align-items-center gap-2' href='#'>
-                                  <FaYoutube />
-                                  <span>Tutorial</span>
-                                </DropdownItem>
-                                <DropdownItem
-                                  className='dropdown-item d-flex align-items-center gap-2'
+                                <BsGearWideConnected />
+                                <span>Create Connection</span>
+                              </button>
+                              <UncontrolledDropdown>
+                                <DropdownToggle
                                   href='#'
-                                  onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
+                                  className='mx-0 px-2 d-flex align-items-center btn btn-sm btn-outline-primary gap-1 py-1 border border-dark-1'
+                                  tag='button'
                                 >
-                                  <FiExternalLink />
+                                  <i className='bx bx-file fs-15 btn btn-sm m-0 p-0'></i>
                                   <span>Documentation</span>
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </>
+                                </DropdownToggle>
+                                <DropdownMenu className='dropdown-menu-end'>
+                                  <DropdownItem className='dropdown-item d-flex align-items-center gap-2' href='#'>
+                                    <FaYoutube />
+                                    <span>Tutorial</span>
+                                  </DropdownItem>
+                                  <DropdownItem
+                                    className='dropdown-item d-flex align-items-center gap-2'
+                                    href='#'
+                                    onClick={() => window.open(`/leadsource/settings/docs/${source.key}`, '_blank')}
+                                  >
+                                    <FiExternalLink />
+                                    <span>Documentation</span>
+                                  </DropdownItem>
+                                </DropdownMenu>
+                              </UncontrolledDropdown>
+                            </>
                           ) : (
-                            <div 
+                            <div
                               className='text-muted fw-medium py-2'
-                              style={{ 
+                              style={{
                                 fontSize: '0.85rem',
                                 letterSpacing: '0.5px',
                                 textTransform: 'uppercase'
@@ -1456,6 +1505,115 @@ const LeadSources = (props) => {
                   >
                     {jotFormCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                     <span>{jotFormCreating ? 'Creating...' : 'Create Connection'}</span>
+                  </button>
+                </>
+              )}
+            </ModalFooter>
+          </Modal>
+
+          {/* Contact Form 7 Creation Modal */}
+          <Modal isOpen={cf7ModalOpen} toggle={() => { setCf7ModalOpen(false); setCf7Result(null); }} size='md' centered>
+            <ModalHeader toggle={() => { setCf7ModalOpen(false); setCf7Result(null); }}>
+              <div className='d-flex align-items-center gap-2'>
+                <RiSurveyLine style={{ color: '#2563eb' }} />
+                <span>Create Contact Form 7 Connection</span>
+              </div>
+            </ModalHeader>
+            <ModalBody>
+              {cf7Error && (
+                <Alert color='danger' className='mb-3' style={{ fontSize: '0.85rem' }} toggle={() => setCf7Error('')}>
+                  {cf7Error}
+                </Alert>
+              )}
+
+              {cf7Result ? (
+                <>
+                  <Alert color='success' className='mb-3' style={{ fontSize: '0.85rem' }}>
+                    Contact Form 7 connection created successfully!
+                  </Alert>
+                  {cf7Result.webhookUrl && (
+                    <div className='p-3 rounded mb-3' style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a' }}>
+                      <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#a16207' }}>
+                        Your Inbound Webhook URL
+                      </div>
+                      <div className='d-flex align-items-center gap-2'>
+                        <code
+                          className='flex-grow-1 p-2 rounded'
+                          style={{
+                            fontSize: '0.75rem',
+                            backgroundColor: '#fff',
+                            border: '1px solid #e2e8f0',
+                            wordBreak: 'break-all',
+                            display: 'block',
+                          }}
+                        >
+                          {cf7Result.webhookUrl}
+                        </code>
+                        <button
+                          className='btn btn-sm btn-outline-primary d-flex align-items-center'
+                          onClick={handleCopyCf7Url}
+                          title='Copy URL'
+                          style={{ minWidth: '36px' }}
+                        >
+                          {cf7Copied ? <FiCheck size={14} /> : <FiCopy size={14} />}
+                        </button>
+                      </div>
+                      <p className='mb-0 mt-2' style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        Add this URL as a webhook in your Contact Form 7 WordPress settings.
+                      </p>
+                    </div>
+                  )}
+                  <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
+                      Next Steps
+                    </div>
+                    <ol className='mb-0 ps-3' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      <li className='mb-1'>Install <strong>Contact Form 7</strong> on your WordPress site</li>
+                      <li className='mb-1'>Download &amp; install our <a href='https://mapi.1automations.com/downloads/cf7-webhook-plugin.zip' target='_blank' rel='noopener noreferrer'>CF7 Webhook Plugin</a></li>
+                      <li className='mb-1'>Open <strong>CF7 Webhook</strong> from the WordPress sidebar</li>
+                      <li className='mb-1'>Select your form and paste the webhook URL above</li>
+                      <li className='mb-1'>Submit a test form entry to generate sample data</li>
+                      <li>Come back here and set up <strong>Field Mapping</strong></li>
+                    </ol>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className='mb-3'>
+                    <label className='form-label fw-medium'>Connection Name <span className='text-danger'>*</span></label>
+                    <input
+                      type='text'
+                      className='form-control'
+                      placeholder='e.g. My Contact Form 7 Leads'
+                      value={cf7Name}
+                      onChange={(e) => setCf7Name(e.target.value)}
+                    />
+                  </div>
+                  <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      After creating the connection, you will receive a webhook URL. You'll need to install our custom CF7 Webhook plugin on your WordPress site and paste the URL there.
+                    </p>
+                  </div>
+                </>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              {cf7Result ? (
+                <button className='btn btn-sm btn-primary' onClick={() => { setCf7ModalOpen(false); setCf7Result(null); }}>
+                  Done
+                </button>
+              ) : (
+                <>
+                  <button className='btn btn-sm btn-soft-danger' onClick={() => setCf7ModalOpen(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    className='btn btn-sm btn-primary d-flex align-items-center gap-2'
+                    onClick={handleCreateContactForm7}
+                    disabled={cf7Creating || !cf7Name.trim()}
+                  >
+                    {cf7Creating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
+                    <span>{cf7Creating ? 'Creating...' : 'Create Connection'}</span>
                   </button>
                 </>
               )}

@@ -70,6 +70,7 @@ const TITLE_RESOLVERS = {
   zohoAccount: (c) => c?.configuration?.accountName,
   typeForm: (c) => c?.configuration?.formName,
   googleForm: (c) => c?.configuration?.formTitle || c?.configuration?.name,
+  contactform7: (c) => `${c?.configuration?.formTitle} (${c?.configuration?.formId})` || c?.configuration?.name,
   accountName: (c) => c?.configuration?.accountName || c.name || c.source,
   connectionName: (c) => c?.configuration?.connectionName || c.name || c.source,
   defaultTitle: (c) => c.name || c.source,
@@ -118,6 +119,12 @@ const PROVIDER_CONFIG = {
   // JotForm
   jotform: {
     getTitle: TITLE_RESOLVERS.googleForm,
+    actions: ['configure', 'webhooks', 'fieldMapping', 'logs', 'delete'],
+  },
+
+  // Contact Form 7
+  contactform7: {
+    getTitle: TITLE_RESOLVERS.contactform7,
     actions: ['configure', 'webhooks', 'fieldMapping', 'logs', 'delete'],
   },
 
