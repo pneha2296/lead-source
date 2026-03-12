@@ -384,6 +384,77 @@ const SOURCE_DOCS = {
       'Works with any JotForm form',
     ],
   },
+  contactform7: {
+    title: 'Contact Form 7',
+    description: 'Connect Contact Form 7 to automatically capture WordPress form submissions as leads using our custom CF7 Webhook plugin.',
+    videoUrl: null,
+    steps: [
+      {
+        title: 'Create a Connection',
+        description: 'Find the Contact Form 7 card in Lead Sources and click "Create Connection". Enter a name for your connection (e.g. "WordPress Contact Leads").',
+        image: '/leadsource/assets/leadsource/cf7_connect.png',
+      },
+      {
+        title: 'Copy the Webhook URL',
+        description: 'After creation, you will see a unique inbound webhook URL. Click the copy button to copy it to your clipboard. You will need this URL in the next steps.',
+        image: '/leadsource/assets/leadsource/cf7_copy_webhook.png',
+        note: 'Keep your webhook URL private. Anyone with the URL can send data to your account.',
+      },
+      {
+        title: 'Install Contact Form 7 on WordPress',
+        description: 'If you haven\'t already, install and activate the Contact Form 7 plugin on your WordPress site. Go to Plugins > Add New, search for "Contact Form 7", and click Install & Activate.',
+        image: '/leadsource/assets/leadsource/cf7_install_cf7.png',
+        tip: 'Contact Form 7 is one of the most popular WordPress form plugins with over 5 million active installations.',
+      },
+      {
+        title: 'Download & Install Our CF7 Webhook Plugin',
+        description: 'Download our custom CF7 Webhook plugin from the link below. In your WordPress dashboard, go to Plugins > Add New > Upload Plugin, select the downloaded .zip file, and click Install Now. Then activate the plugin.',
+        image: '/leadsource/assets/leadsource/cf7_install_plugin.png',
+        note: 'Download link: https://mapi.1automations.com/downloads/cf7-webhook-plugin.zip',
+      },
+      {
+        title: 'Open CF7 Webhook Settings',
+        description: 'After activating the plugin, you will see a new "CF7 Webhook" option in your WordPress sidebar. Click on it to open the webhook configuration page.',
+        image: '/leadsource/assets/leadsource/cf7_sidebar.png',
+      },
+      {
+        title: 'Paste the Webhook URL',
+        description: 'In the CF7 Webhook settings page, select your Contact Form 7 form from the dropdown, paste the webhook URL you copied earlier into the Webhook URL field, and click Save.',
+        image: '/leadsource/assets/leadsource/cf7_paste_url.png',
+      },
+      {
+        title: 'Send a Test Submission (Generate Sample Data)',
+        description: 'Go to your WordPress page where the Contact Form 7 form is displayed and submit a test entry with sample data (name, email, phone, message, etc.). This sends the data to the webhook and allows the system to auto-detect your form fields.',
+        image: '/leadsource/assets/leadsource/cf7_test_submission.png',
+        note: 'You must send at least one test submission before field mapping will show available form fields. Without sample data, the system cannot detect which fields your form has.',
+      },
+      {
+        title: 'Set Up Field Mapping',
+        description: 'Back in Lead Sources, open Field Mapping on your Contact Form 7 connection card. You will now see the form fields detected from your test submission. Map each form field (name, email, phone, message, etc.) to the corresponding CRM field. Toggle "Auto-create Contact" to automatically create CRM contacts for each new submission.',
+        image: '/leadsource/assets/leadsource/cf7_field_mapping.png',
+      },
+      {
+        title: 'Add Webhooks (Optional)',
+        description: 'Navigate to Webhooks on your connection card to add outbound webhook URLs. These will receive real-time notifications when a new Contact Form 7 submission is captured as a lead.',
+        image: '/leadsource/assets/leadsource/cf7_webhooks.png',
+      },
+      {
+        title: 'View Logs & Monitor',
+        description: 'Use the Logs section to monitor all captured form submissions. Each log entry shows the source, status, payload data, and timestamp for easy debugging. Verify that your test submission appears in the logs.',
+        image: '/leadsource/assets/leadsource/cf7_logs.png',
+      },
+    ],
+    features: [
+      'Custom CF7 Webhook plugin — easy one-click install',
+      'Auto-detect form fields from incoming submissions',
+      'Capture form submissions in real-time',
+      'Map Contact Form 7 fields to CRM fields',
+      'Auto-create CRM contacts on new submissions',
+      'Forward leads to outbound webhooks',
+      'Detailed submission logs for monitoring',
+      'Works with any Contact Form 7 form',
+    ],
+  },
   phoneContact: {
     title: 'Phone Contact',
     description: 'Import contacts from your phone by uploading a VCF/vCard file or syncing directly via JSON from your mobile app.',
