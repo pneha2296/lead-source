@@ -502,7 +502,6 @@ const SOURCE_DOCS = {
       'Detailed import logs for tracking',
     ],
   },
-
   hubspotCrm: {
     title: 'HubSpot CRM',
     description: 'Connect your HubSpot account to automatically capture leads from HubSpot forms and contacts.',
@@ -511,44 +510,38 @@ const SOURCE_DOCS = {
       {
         title: 'Click "Create Connection"',
         description: 'Go to Lead Sources, find HubSpot CRM and click the Create Connection button. A HubSpot authorization window will open.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_create_connection.png',
       },
       {
         title: 'Authorize HubSpot Account',
         description: 'Sign in to your HubSpot account and authorize the application. Grant the required permissions to access your contacts and forms.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_authorize_account.png',
       },
       {
         title: 'Connection Created',
         description: 'After authorization, you will be redirected back and your HubSpot connection will appear in the list automatically.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_connection_created.png',
       },
       {
-        title: 'Configure — Select a Form',
-        description: 'Click "Configure" on your HubSpot connection card. Select a HubSpot form from the dropdown to capture submissions from.',
-        image: null,
-        tip: 'If you don\'t see your forms, click "Refresh Forms" to reload the list from HubSpot.',
-      },
-      {
-        title: 'Save Form Selection',
-        description: 'After selecting a form, click "Save Selection". New form submissions will now be synced as leads.',
-        image: null,
+        title: 'Create Contact on Hobspot',
+        description: 'Sidebar see option CRM -> Contacts and create new contact.',
+        image: '/leadsource/assets/leadsource/hubspot_create_contact.png',
       },
       {
         title: 'Set Up Field Mapping',
         description: 'Click "Field Mapping" on the connection card to map HubSpot contact properties to your CRM fields.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_field_mapping.png',
         tip: 'HubSpot contact properties like firstname, lastname, email, phone are automatically available for mapping.',
       },
       {
         title: 'Configure Webhooks (Optional)',
         description: 'Click "Webhooks" to set up custom webhook notifications for new leads received from HubSpot.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_webhooks.png',
       },
       {
         title: 'View Logs',
         description: 'Click "View Logs" to see all incoming leads and their processing status from HubSpot.',
-        image: null,
+        image: '/leadsource/assets/leadsource/hubspot_view_logs.png',
       },
     ],
     features: [
