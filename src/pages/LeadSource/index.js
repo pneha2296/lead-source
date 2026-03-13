@@ -38,7 +38,8 @@ import {
   connectGoogleForms,
   getGoogleFormsAppsScript,
   connectJotForm,
-  connectContactForm7
+  connectContactForm7,
+  deleteHubspotConnection
 } from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
@@ -104,7 +105,7 @@ const sourceIconMap = {
   ocr_app: <IoQrCodeOutline />,
   zoho: <SiZoho />,
   zoho_crm: <SiZoho />,
-  hubspot_crm: <FaHubspot />,
+  hubspot: <FaHubspot />,
   indiamart: <FaIndustry />,
   trade_india: <FaHandshake />,
   magic_bricks: <BsBuildingsFill />,
@@ -326,7 +327,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Hubspot CRM',
       key: 'hubspotCrm',
-      isConnectShow: false,
+      isConnectShow: true,
       icon: <FaHubspot />,
       description: 'Sync leads from Hubspot CRM',
     },
@@ -433,6 +434,8 @@ const LeadSources = (props) => {
       await deleteJotFormConnection(id);
     } else if (provider === 'contact_form_7' || provider === 'contactform7') {
       await deleteContactForm7Connection(id);
+    } else if (provider === 'hubspot' || provider === 'hubspot_crm' || provider === 'hubspotCrm') {
+      await deleteHubspotConnection(id);
     } else {
       await deleteConnection(id);
     }
@@ -532,6 +535,35 @@ const LeadSources = (props) => {
         setCf7Result(null);
         setCf7Copied(false);
         setCf7ModalOpen(true);
+        break;
+      }
+      case 'hubspotCrm': {
+        const token = await getSessionToken({ leadSourceId: 'hubspot_crm' });
+        setLoading(false);
+        const hubspotUrl = `https://oauth.automationsbuilder.com/hubspot-session?token=${token?.session}`;
+        const hWidth = 600;
+        const hHeight = 700;
+        const hLeft = window.screenX + (window.outerWidth - hWidth) / 2;
+        const hTop = window.screenY + (window.outerHeight - hHeight) / 2;
+        const hubspotPopup = window.open(hubspotUrl, 'hubspot_oauth', `width=${hWidth},height=${hHeight},left=${hLeft},top=${hTop},scrollbars=yes`);
+        if (hubspotPopup) {
+          const pollTimer = setInterval(() => {
+            try {
+              if (hubspotPopup.closed) {
+                clearInterval(pollTimer);
+                fetchConnections(currentPage);
+                return;
+              }
+              if (hubspotPopup.location.href && hubspotPopup.location.href.includes('hubspot=success')) {
+                clearInterval(pollTimer);
+                hubspotPopup.close();
+                fetchConnections(currentPage);
+              }
+            } catch (e) {
+              // Cross-origin — ignore until redirect back to same origin or popup closes
+            }
+          }, 500);
+        }
         break;
       }
       case 'typeform': {

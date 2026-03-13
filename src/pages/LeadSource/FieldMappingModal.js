@@ -13,7 +13,7 @@ import { BiLink, BiUnlink } from 'react-icons/bi';
 import { IoMdClose } from 'react-icons/io';
 import { FiSearch } from 'react-icons/fi';
 import { HiOutlineUserAdd } from 'react-icons/hi';
-import { getCrmFields, getFieldMappings, upsertFieldMappings, getFacebookForms, getFacebookPages, getIndiamartFieldList, getZohoFieldList, getGenericWebhookFieldList, getPhoneContactFieldList, getTypeformFieldList, getGoogleFormsFieldList, getJotFormFieldList, getContactForm7FieldList } from '../../helpers/backend_helper';
+import { getCrmFields, getFieldMappings, upsertFieldMappings, getFacebookForms, getFacebookPages, getIndiamartFieldList, getZohoFieldList, getGenericWebhookFieldList, getPhoneContactFieldList, getTypeformFieldList, getGoogleFormsFieldList, getJotFormFieldList, getContactForm7FieldList, getHubspotFieldList } from '../../helpers/backend_helper';
 
 // --- Provider-specific form field fetchers ---
 // Each fetcher returns a Promise that resolves to an array of { key, name/label } objects.
@@ -147,6 +147,32 @@ const PROVIDER_FIELD_FETCHERS = {
   },
   contactform7: async (connection) => {
     const res = await getContactForm7FieldList(connection._id || connection.id);
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+
+  // HubSpot CRM
+  hubspot: async (connection) => {
+    const res = await getHubspotFieldList(connection._id || connection.id);
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+  hubspot_crm: async (connection) => {
+    const res = await getHubspotFieldList(connection._id || connection.id);
+    const fieldsObj = res?.formFields || res?.data?.formFields || {};
+    if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
+      return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));
+    }
+    return Array.isArray(fieldsObj) ? fieldsObj : [];
+  },
+  hubspotCrm: async (connection) => {
+    const res = await getHubspotFieldList(connection._id || connection.id);
     const fieldsObj = res?.formFields || res?.data?.formFields || {};
     if (typeof fieldsObj === 'object' && !Array.isArray(fieldsObj)) {
       return Object.entries(fieldsObj).map(([key, label]) => ({ key, name: label, label }));

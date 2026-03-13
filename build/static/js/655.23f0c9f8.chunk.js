@@ -1,0 +1,2 @@
+(self.webpackChunkcom_bot=self.webpackChunkcom_bot||[]).push([[655],{8334(e,s,c){"use strict";c.d(s,{default:()=>n});var t=c(92676),o=c.n(t);let a=new(o().Endpoint)("s3.eu-west-1.wasabisys.com");const n=new(o().S3)({endpoint:a,accessKeyId:"VI6MRCQDN1EELYEP2NSC",secretAccessKey:"jemu8SiqYm8jZsLuFoeaYHGkpwRdkac76ljOadTq",correctClockSkew:!0})},11976(){}}]);
+//# sourceMappingURL=655.23f0c9f8.chunk.js.map

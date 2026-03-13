@@ -71,6 +71,13 @@ export const TYPEFORM_GET_FIELD_LIST = '/api/auth/typeform/get-field-list';
 export const TYPEFORM_DELETE = '/api/auth/typeform';
 export const TYPEFORM_WEBHOOK_CONNECT = '/api/auth/typeform/webhook-connect';
 
+// HubSpot CRM APIs
+export const HUBSPOT_CONNECTION = '/api/auth/hubspot/connection';
+export const HUBSPOT_FORMS = '/api/auth/hubspot/forms';
+export const HUBSPOT_SAVE_SELECTION = '/api/auth/hubspot/save-selection';
+export const HUBSPOT_GET_FIELD_LIST = '/api/auth/hubspot/get-field-list';
+export const HUBSPOT_DELETE = '/api/auth/hubspot';
+
 export const CRM_FIELDS = 'https://mapi.1automations.com/api/v2/crm/fields';
 export const FIELD_MAPPING = '/api/auth/field-mapping';
 export const FIELD_MAPPING_UPSERT = '/api/auth/field-mapping/upsert';

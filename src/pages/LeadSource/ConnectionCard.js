@@ -71,6 +71,7 @@ const TITLE_RESOLVERS = {
   typeForm: (c) => c?.configuration?.formName,
   googleForm: (c) => c?.configuration?.formTitle || c?.configuration?.name,
   contactform7: (c) => `${c?.configuration?.formTitle} (${c?.configuration?.formId})` || c?.configuration?.name,
+  hubspot: (c) => `${c?.configuration?.userEmail} ${c?.configuration?.hubDomain}`,
   accountName: (c) => c?.configuration?.accountName || c.name || c.source,
   connectionName: (c) => c?.configuration?.connectionName || c.name || c.source,
   defaultTitle: (c) => c.name || c.source,
@@ -170,9 +171,9 @@ const PROVIDER_CONFIG = {
     actions: ['configure', 'webhooks', 'syncLeads', 'fieldMapping', 'logs', 'delete'],
   },
 
-  hubspot_crm: {
-    getTitle: TITLE_RESOLVERS.connectionName,
-    actions: ['configure', 'webhooks', 'fieldMapping', 'logs', 'delete'],
+  hubspot: {
+    getTitle: TITLE_RESOLVERS.hubspot,
+    actions: ['webhooks', 'fieldMapping', 'logs', 'delete'],
   },
 
   salesforce: {

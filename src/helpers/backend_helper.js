@@ -373,6 +373,13 @@ export const getTypeformFieldList = (connectionId) => leadsourceApi.get(`${lsUrl
 export const deleteTypeformConnection = (id) => leadsourceApi.delete(`${lsUrl.TYPEFORM_DELETE}/${id}/delete-selection`);
 export const connectTypeformWebhook = (data) => leadsourceApi.create(lsUrl.TYPEFORM_WEBHOOK_CONNECT, data);
 
+// HubSpot CRM
+export const getHubspotConnection = (id) => leadsourceApi.get(`${lsUrl.HUBSPOT_CONNECTION}/${id}`);
+export const getHubspotForms = (connectionId) => leadsourceApi.get(`${lsUrl.HUBSPOT_FORMS}?connectionId=${connectionId}`);
+export const saveHubspotSelection = (data) => leadsourceApi.create(lsUrl.HUBSPOT_SAVE_SELECTION, data);
+export const getHubspotFieldList = (connectionId) => leadsourceApi.get(`${lsUrl.HUBSPOT_GET_FIELD_LIST}?connectionId=${connectionId}`);
+export const deleteHubspotConnection = (id) => leadsourceApi.delete(`${lsUrl.HUBSPOT_DELETE}/${id}/delete-connection`);
+
 export const getCrmFields = (data) => api.get(lsUrl.CRM_FIELDS, data);
 export const getFieldMappings = (connectionId) => leadsourceApi.get(`${lsUrl.FIELD_MAPPING}/${connectionId}`);
 export const upsertFieldMappings = (data) => leadsourceApi.create(lsUrl.FIELD_MAPPING_UPSERT, data);

@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkcom_bot=self.webpackChunkcom_bot||[]).push([[8360],{88360(o,t,c){c.r(t),c.d(t,{default:()=>s});var n=c(89365),a=c(70579);const s=()=>"localhost"!==window.location.hostname?(window.location.href="".concat(window.location.origin,"/products"),(0,a.jsx)(n.A,{})):(0,a.jsx)(a.Fragment,{})}}]);
-//# sourceMappingURL=8360.73de3e14.chunk.js.map

@@ -10,6 +10,7 @@ import TypeformConfigForm from './ConfigForms/TypeformConfigForm';
 import GoogleFormsConfigForm from './ConfigForms/GoogleFormsConfigForm';
 import JotFormConfigForm from './ConfigForms/JotFormConfigForm';
 import ContactForm7ConfigForm from './ConfigForms/ContactForm7ConfigForm';
+import HubspotConfigForm from './ConfigForms/HubspotConfigForm';
 
 const getProvider = (connection) =>
   connection?.provider || connection?.source || '';
@@ -31,6 +32,9 @@ const PROVIDER_FORM_MAP = {
   jotForm: JotFormConfigForm,
   contact_form_7: ContactForm7ConfigForm,
   contactform7: ContactForm7ConfigForm,
+  hubspot: HubspotConfigForm,
+  hubspot_crm: HubspotConfigForm,
+  hubspotCrm: HubspotConfigForm,
 };
 
 const ConfigureModal = ({ isOpen, toggle, connection, onSave }) => {
