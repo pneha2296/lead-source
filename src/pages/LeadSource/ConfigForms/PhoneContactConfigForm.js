@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ModalBody,
   ModalFooter,
@@ -6,25 +6,15 @@ import {
   Alert,
 } from 'reactstrap';
 import { ImMobile } from 'react-icons/im';
-import { FiUpload, FiCheck } from 'react-icons/fi';
-import { HiOutlineUserGroup } from 'react-icons/hi';
-import { getPhoneContactConnection, getPhoneContactUploadUrl, processPhoneContactFile, uploadPhoneContactJson } from '../../../helpers/backend_helper';
+import { FiCopy, FiCheck } from 'react-icons/fi';
+import { QRCodeSVG } from 'qrcode.react';
+import { getPhoneContactConnection } from '../../../helpers/backend_helper';
 
 const PhoneContactConfigForm = ({ connection, toggle }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [connectionDetails, setConnectionDetails] = useState(null);
-  const [activeMethod, setActiveMethod] = useState('vcf');
-
-  // VCF upload state
-  const [uploading, setUploading] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const fileInputRef = useRef(null);
-
-  // JSON upload state
-  const [jsonContacts, setJsonContacts] = useState('');
-  const [uploadingJson, setUploadingJson] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState(false);
 
   const connectionId = connection?._id || connection?.id;
 
@@ -43,75 +33,14 @@ const PhoneContactConfigForm = ({ connection, toggle }) => {
   }, [connectionId]);
 
   const config = connectionDetails?.configuration || connection?.configuration || {};
+  const webhookUrl = config.webhookUrl || connectionDetails?.webhookUrl || '';
 
-  const handleVcfUpload = async () => {
-    const file = fileInputRef.current?.files?.[0];
-    if (!file) {
-      setError('Please select a .vcf file first.');
-      return;
-    }
-    if (!file.name.endsWith('.vcf')) {
-      setError('Only .vcf files are supported.');
-      return;
-    }
-
-    setUploading(true);
-    setError('');
-    setSuccess('');
-    try {
-      // Step 1: Get pre-signed S3 upload URL
-      const urlRes = await getPhoneContactUploadUrl(connectionId);
-      const uploadUrl = urlRes?.uploadUrl || urlRes?.data?.uploadUrl;
-      if (!uploadUrl) throw new Error('Failed to get upload URL');
-
-      // Step 2: Upload file to S3
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': 'text/vcard' },
-      });
-
-      setUploading(false);
-      setProcessing(true);
-
-      // Step 3: Process the uploaded file
-      const processRes = await processPhoneContactFile(connectionId);
-      const imported = processRes?.imported || processRes?.data?.imported || 0;
-      setSuccess(`File uploaded and processed successfully! ${imported} contacts imported.`);
-      fileInputRef.current.value = '';
-    } catch (err) {
-      setError(err?.msg || err?.message || 'Failed to upload and process file.');
-    } finally {
-      setUploading(false);
-      setProcessing(false);
-    }
-  };
-
-  const handleJsonUpload = async () => {
-    setError('');
-    setSuccess('');
-    let contacts;
-    try {
-      contacts = JSON.parse(jsonContacts);
-      if (!Array.isArray(contacts)) {
-        contacts = [contacts];
-      }
-    } catch {
-      setError('Invalid JSON format. Please provide a valid JSON array of contacts.');
-      return;
-    }
-
-    setUploadingJson(true);
-    try {
-      const res = await uploadPhoneContactJson(connectionId, { contacts });
-      const imported = res?.imported || res?.data?.imported || contacts.length;
-      setSuccess(`${imported} contacts synced successfully!`);
-      setJsonContacts('');
-    } catch (err) {
-      setError(err?.msg || err?.message || 'Failed to sync contacts.');
-    } finally {
-      setUploadingJson(false);
-    }
+  const handleCopyUrl = () => {
+    if (!webhookUrl) return;
+    navigator.clipboard.writeText(webhookUrl).then(() => {
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2000);
+    });
   };
 
   return (
@@ -120,11 +49,6 @@ const PhoneContactConfigForm = ({ connection, toggle }) => {
         {error && (
           <Alert color='danger' className='mb-3' style={{ fontSize: '0.85rem' }} toggle={() => setError('')}>
             {error}
-          </Alert>
-        )}
-        {success && (
-          <Alert color='success' className='mb-3' style={{ fontSize: '0.85rem' }} toggle={() => setSuccess('')}>
-            <FiCheck className='me-1' />{success}
           </Alert>
         )}
 
@@ -188,100 +112,68 @@ const PhoneContactConfigForm = ({ connection, toggle }) => {
               </div>
             )}
 
-            {/* Upload Method Tabs */}
-            <div className='d-flex gap-2 mb-3'>
-              <button
-                className={`btn btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-1`}
-                style={{
-                  backgroundColor: activeMethod === 'vcf' ? '#3b82f6' : '#f1f5f9',
-                  color: activeMethod === 'vcf' ? '#fff' : '#64748b',
-                  border: 'none',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => setActiveMethod('vcf')}
-              >
-                <FiUpload size={14} />
-                <span>Upload VCF File</span>
-              </button>
-              <button
-                className={`btn btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-1`}
-                style={{
-                  backgroundColor: activeMethod === 'json' ? '#3b82f6' : '#f1f5f9',
-                  color: activeMethod === 'json' ? '#fff' : '#64748b',
-                  border: 'none',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => setActiveMethod('json')}
-              >
-                <HiOutlineUserGroup size={14} />
-                <span>JSON Sync</span>
-              </button>
-            </div>
-
-            {/* VCF Upload */}
-            {activeMethod === 'vcf' && (
-              <div className='p-3 rounded mb-3' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
-                  Upload VCF / vCard File
+            {/* Webhook URL */}
+            {webhookUrl && (
+              <div className='p-3 rounded mb-3' style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a' }}>
+                <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#a16207' }}>
+                  Webhook URL
                 </div>
-                <p className='text-muted mb-2' style={{ fontSize: '0.75rem' }}>
-                  Export contacts from your phone as a .vcf file and upload it here. The system will parse the file and import all contacts.
-                </p>
                 <div className='d-flex align-items-center gap-2'>
-                  <input
-                    ref={fileInputRef}
-                    type='file'
-                    accept='.vcf'
-                    className='form-control form-control-sm'
-                    style={{ fontSize: '0.8rem' }}
-                  />
-                  <button
-                    className='btn btn-sm btn-primary d-flex align-items-center gap-1'
-                    onClick={handleVcfUpload}
-                    disabled={uploading || processing}
-                    style={{ whiteSpace: 'nowrap' }}
+                  <code
+                    className='flex-grow-1 p-2 rounded'
+                    style={{
+                      fontSize: '0.75rem',
+                      backgroundColor: '#fff',
+                      border: '1px solid #e2e8f0',
+                      wordBreak: 'break-all',
+                      display: 'block',
+                    }}
                   >
-                    {(uploading || processing) && <Spinner size='sm' />}
-                    <span>{uploading ? 'Uploading...' : processing ? 'Processing...' : 'Upload & Import'}</span>
+                    {webhookUrl}
+                  </code>
+                  <button
+                    className='btn btn-sm btn-outline-primary d-flex align-items-center'
+                    onClick={handleCopyUrl}
+                    title='Copy URL'
+                    style={{ minWidth: '36px' }}
+                  >
+                    {copiedUrl ? <FiCheck size={14} /> : <FiCopy size={14} />}
                   </button>
                 </div>
               </div>
             )}
 
-            {/* JSON Upload */}
-            {activeMethod === 'json' && (
+            {/* QR Code */}
+            {webhookUrl && (
               <div className='p-3 rounded mb-3' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
                 <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
-                  Direct JSON Contact Sync
+                  Scan QR Code with your Phone
                 </div>
-                <p className='text-muted mb-2' style={{ fontSize: '0.75rem' }}>
-                  Paste a JSON array of contacts to sync directly. Ideal for mobile app integrations.
+                <p className='text-muted mb-3' style={{ fontSize: '0.75rem' }}>
+                  Open your phone camera and scan this QR code to access the webhook URL.
                 </p>
-                <textarea
-                  className='form-control form-control-sm mb-2'
-                  rows={5}
-                  style={{ fontSize: '0.78rem', fontFamily: 'monospace' }}
-                  placeholder={`[\n  { "name": "John Doe", "phone": "+1234567890", "email": "john@example.com" },\n  { "name": "Jane Smith", "phone": "+0987654321" }\n]`}
-                  value={jsonContacts}
-                  onChange={(e) => setJsonContacts(e.target.value)}
-                />
-                <button
-                  className='btn btn-sm btn-primary d-flex align-items-center gap-1'
-                  onClick={handleJsonUpload}
-                  disabled={uploadingJson || !jsonContacts.trim()}
-                >
-                  {uploadingJson && <Spinner size='sm' />}
-                  <span>{uploadingJson ? 'Syncing...' : 'Sync Contacts'}</span>
-                </button>
+                <div className='d-flex justify-content-center'>
+                  <QRCodeSVG
+                    value={webhookUrl}
+                    size={200}
+                    level='M'
+                    includeMargin
+                    style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', backgroundColor: '#fff' }}
+                  />
+                </div>
               </div>
             )}
 
-            {/* Info */}
+            {/* Instructions */}
             <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-              <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                Imported contacts will be saved as leads. If field mappings are configured, CRM contacts will be created automatically.
-                Use the Logs section to track all imported contacts.
-              </p>
+              <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
+                How to Use
+              </div>
+              <ol className='mb-0 ps-3' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                <li className='mb-1'>Scan the QR code above with your phone camera</li>
+                <li className='mb-1'>Open the link to send contacts from your phone</li>
+                <li>Contacts will automatically be imported as leads</li>
+              </ol>
             </div>
           </>
         )}

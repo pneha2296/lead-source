@@ -70,6 +70,7 @@ import { MdRestaurant } from 'react-icons/md';
 import { RiSurveyLine } from 'react-icons/ri';
 import { getSessionToken } from '../../helpers/backend_helper';
 import Preloader from '../../Components/Loaders/Preloader';
+import { QRCodeSVG } from 'qrcode.react';
 
 const sourceIconMap = {
   // camelCase keys (used in allSources)
@@ -144,6 +145,8 @@ const LeadSources = (props) => {
   const [phoneName, setPhoneName] = useState('');
   const [phoneCreating, setPhoneCreating] = useState(false);
   const [phoneError, setPhoneError] = useState('');
+  const [phoneResult, setPhoneResult] = useState(null);
+  const [phoneCopied, setPhoneCopied] = useState(false);
 
   // Google Forms creation modal state
   const [googleFormsModalOpen, setGoogleFormsModalOpen] = useState(false);
@@ -300,7 +303,7 @@ const LeadSources = (props) => {
       version: '0.0.1',
       name: 'Phone Contact',
       key: 'phoneContact',
-      isConnectShow: false,
+      isConnectShow: true,
       icon: <ImMobile />,
       description: 'Import leads from phone contacts',
     },
@@ -509,6 +512,8 @@ const LeadSources = (props) => {
       case 'phoneContact': {
         setPhoneName('');
         setPhoneError('');
+        setPhoneResult(null);
+        setPhoneCopied(false);
         setPhoneModalOpen(true);
         break;
       }
@@ -647,14 +652,23 @@ const LeadSources = (props) => {
     setPhoneCreating(true);
     setPhoneError('');
     try {
-      await connectPhoneContact({ name: phoneName.trim() });
-      setPhoneModalOpen(false);
+      const res = await connectPhoneContact({ name: phoneName.trim() });
+      setPhoneResult(res.data || res);
       fetchConnections(currentPage);
     } catch (err) {
       setPhoneError(err?.msg || err?.response?.data?.msg || 'Failed to create phone contact connection.');
     } finally {
       setPhoneCreating(false);
     }
+  };
+
+  const handleCopyPhoneUrl = () => {
+    const url = phoneResult?.webhookUrl;
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      setPhoneCopied(true);
+      setTimeout(() => setPhoneCopied(false), 2000);
+    });
   };
 
   const handleCreateGoogleForms = async () => {
@@ -1075,8 +1089,21 @@ const LeadSources = (props) => {
           />
 
           {/* Phone Contact Creation Modal */}
-          <Modal isOpen={phoneModalOpen} toggle={() => setPhoneModalOpen(false)} size='md' centered>
-            <ModalHeader toggle={() => setPhoneModalOpen(false)}>
+          <Modal
+            isOpen={phoneModalOpen}
+            toggle={() => {
+              setPhoneModalOpen(false);
+              setPhoneResult(null);
+            }}
+            size='md'
+            centered
+          >
+            <ModalHeader
+              toggle={() => {
+                setPhoneModalOpen(false);
+                setPhoneResult(null);
+              }}
+            >
               <div className='d-flex align-items-center gap-2'>
                 <ImMobile style={{ color: '#f59e0b' }} />
                 <span>Create Phone Contact Connection</span>
@@ -1088,36 +1115,119 @@ const LeadSources = (props) => {
                   {phoneError}
                 </Alert>
               )}
-              <div className='mb-3'>
-                <label className='form-label fw-medium'>
-                  Connection Name <span className='text-danger'>*</span>
-                </label>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='e.g. My Phone Contacts'
-                  value={phoneName}
-                  onChange={(e) => setPhoneName(e.target.value)}
-                />
-              </div>
-              <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                  After creating the connection, use the Configure button to upload a VCF file or sync contacts via JSON.
-                </p>
-              </div>
+
+              {phoneResult ? (
+                <>
+                  <Alert color='success' className='mb-3' style={{ fontSize: '0.85rem' }}>
+                    Phone Contact connection created successfully!
+                  </Alert>
+
+                  {/* Webhook URL */}
+                  {phoneResult.webhookUrl && (
+                    <div className='p-3 rounded mb-3' style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a' }}>
+                      <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#a16207' }}>
+                        Your Webhook URL
+                      </div>
+                      <div className='d-flex align-items-center gap-2'>
+                        <code
+                          className='flex-grow-1 p-2 rounded'
+                          style={{
+                            fontSize: '0.75rem',
+                            backgroundColor: '#fff',
+                            border: '1px solid #e2e8f0',
+                            wordBreak: 'break-all',
+                            display: 'block',
+                          }}
+                        >
+                          {phoneResult.webhookUrl}
+                        </code>
+                        <button
+                          className='btn btn-sm btn-outline-primary d-flex align-items-center'
+                          onClick={handleCopyPhoneUrl}
+                          title='Copy URL'
+                          style={{ minWidth: '36px' }}
+                        >
+                          {phoneCopied ? <FiCheck size={14} /> : <FiCopy size={14} />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* QR Code */}
+                  {phoneResult.webhookUrl && (
+                    <div className='p-3 rounded mb-3' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                      <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
+                        Scan QR Code with your Phone
+                      </div>
+                      <p className='text-muted mb-3' style={{ fontSize: '0.75rem' }}>
+                        Open your phone camera and scan this QR code to access the webhook URL.
+                      </p>
+                      <div className='d-flex justify-content-center'>
+                        <QRCodeSVG
+                          value={phoneResult.webhookUrl}
+                          size={200}
+                          level='M'
+                          includeMargin
+                          style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', backgroundColor: '#fff' }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Instructions */}
+                  <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <div className='fw-medium mb-2' style={{ fontSize: '0.83rem', color: '#475569' }}>
+                      How to Use
+                    </div>
+                    <ol className='mb-0 ps-3' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      <li className='mb-1'>Scan the QR code above with your phone camera</li>
+                      <li className='mb-1'>Open the link to send contacts from your phone</li>
+                      <li>Contacts will automatically be imported as leads</li>
+                    </ol>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className='mb-3'>
+                    <label className='form-label fw-medium'>
+                      Connection Name <span className='text-danger'>*</span>
+                    </label>
+                    <input
+                      type='text'
+                      className='form-control'
+                      placeholder='e.g. My Phone Contacts'
+                      value={phoneName}
+                      onChange={(e) => setPhoneName(e.target.value)}
+                    />
+                  </div>
+                  <div className='p-3 rounded' style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <p className='mb-0' style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      A webhook URL will be created and a QR code will be generated for you to scan with your phone.
+                    </p>
+                  </div>
+                </>
+              )}
             </ModalBody>
             <ModalFooter>
-              <button className='btn btn-sm btn-soft-danger' onClick={() => setPhoneModalOpen(false)}>
-                Cancel
-              </button>
               <button
-                className='btn btn-sm btn-primary d-flex align-items-center gap-2'
-                onClick={handleCreatePhoneContact}
-                disabled={phoneCreating || !phoneName.trim()}
+                className='btn btn-sm btn-soft-danger'
+                onClick={() => {
+                  setPhoneModalOpen(false);
+                  setPhoneResult(null);
+                }}
               >
-                {phoneCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
-                <span>{phoneCreating ? 'Creating...' : 'Create Connection'}</span>
+                {phoneResult ? 'Close' : 'Cancel'}
               </button>
+              {!phoneResult && (
+                <button
+                  className='btn btn-sm btn-primary d-flex align-items-center gap-2'
+                  onClick={handleCreatePhoneContact}
+                  disabled={phoneCreating || !phoneName.trim()}
+                >
+                  {phoneCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
+                  <span>{phoneCreating ? 'Creating...' : 'Create Connection'}</span>
+                </button>
+              )}
             </ModalFooter>
           </Modal>
 
@@ -1231,7 +1341,7 @@ const LeadSources = (props) => {
                     <input
                       type='text'
                       className='form-control'
-                      placeholder='e.g. googlesheet, zapier, custom'
+                      placeholder='e.g. googlesheet, custom'
                       value={webhookType}
                       onChange={(e) => setWebhookType(e.target.value)}
                     />
