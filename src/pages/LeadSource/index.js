@@ -613,8 +613,10 @@ const LeadSources = (props) => {
     setLoading(false);
   }
 
+  const toSlug = (str) => str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
   const handleCreateWebhook = async () => {
-    if (!webhookName.trim()) {
+    if (!webhookName) {
       setWebhookError('Please enter a connection name.');
       return;
     }
@@ -622,8 +624,9 @@ const LeadSources = (props) => {
     setWebhookError('');
     try {
       const res = await connectGenericWebhook({
-        type: webhookType.trim() || 'generic',
-        name: webhookName.trim(),
+        type: webhookType || 'generic',
+        accountName: toSlug(webhookName),
+        name: webhookName,
       });
       setWebhookResult(res.data || res);
       fetchConnections(currentPage);
@@ -644,14 +647,14 @@ const LeadSources = (props) => {
   };
 
   const handleCreatePhoneContact = async () => {
-    if (!phoneName.trim()) {
+    if (!phoneName) {
       setPhoneError('Please enter a connection name.');
       return;
     }
     setPhoneCreating(true);
     setPhoneError('');
     try {
-      const res = await connectPhoneContact({ name: phoneName.trim() });
+      const res = await connectPhoneContact({ accountName: toSlug(phoneName), name: phoneName });
       setPhoneResult(res.data || res);
       fetchConnections(currentPage);
     } catch (err) {
@@ -671,14 +674,14 @@ const LeadSources = (props) => {
   };
 
   const handleCreateGoogleForms = async () => {
-    if (!googleFormsName.trim()) {
+    if (!googleFormsName) {
       setGoogleFormsError('Please enter a connection name.');
       return;
     }
     setGoogleFormsCreating(true);
     setGoogleFormsError('');
     try {
-      const res = await connectGoogleForms({ name: googleFormsName.trim() });
+      const res = await connectGoogleForms({ accountName: toSlug(googleFormsName), name: googleFormsName });
       const connectionData = res.data || res;
       const connectionId = connectionData?._id || connectionData?.id || connectionData?.connectionId;
 
@@ -721,14 +724,14 @@ const LeadSources = (props) => {
   };
 
   const handleCreateJotForm = async () => {
-    if (!jotFormName.trim()) {
+    if (!jotFormName) {
       setJotFormError('Please enter a connection name.');
       return;
     }
     setJotFormCreating(true);
     setJotFormError('');
     try {
-      const res = await connectJotForm({ name: jotFormName.trim() });
+      const res = await connectJotForm({ accountName: toSlug(jotFormName), name: jotFormName });
       setJotFormResult(res.data || res);
       fetchConnections(currentPage);
     } catch (err) {
@@ -748,14 +751,14 @@ const LeadSources = (props) => {
   };
 
   const handleCreateContactForm7 = async () => {
-    if (!cf7Name.trim()) {
+    if (!cf7Name) {
       setCf7Error('Please enter a connection name.');
       return;
     }
     setCf7Creating(true);
     setCf7Error('');
     try {
-      const res = await connectContactForm7({ name: cf7Name.trim() });
+      const res = await connectContactForm7({ accountName: toSlug(cf7Name), name: cf7Name });
       setCf7Result(res.data || res);
       fetchConnections(currentPage);
     } catch (err) {
@@ -1211,7 +1214,7 @@ const LeadSources = (props) => {
                 <button
                   className='btn btn-sm btn-primary d-flex align-items-center gap-2'
                   onClick={handleCreatePhoneContact}
-                  disabled={phoneCreating || !phoneName.trim()}
+                  disabled={phoneCreating || !phoneName}
                 >
                   {phoneCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                   <span>{phoneCreating ? 'Creating...' : 'Create Connection'}</span>
@@ -1332,7 +1335,10 @@ const LeadSources = (props) => {
                       className='form-control'
                       placeholder='e.g. googlesheet, custom'
                       value={webhookType}
-                      onChange={(e) => setWebhookType(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/[^a-z]/g, '');
+                        setWebhookType(val);
+                      }}
                     />
                     <small className='text-muted'>A label to identify the source type. Leave blank for "generic".</small>
                   </div>
@@ -1358,7 +1364,7 @@ const LeadSources = (props) => {
                   <button
                     className='btn btn-sm btn-primary d-flex align-items-center gap-2'
                     onClick={handleCreateWebhook}
-                    disabled={webhookCreating || !webhookName.trim()}
+                    disabled={webhookCreating || !webhookName}
                   >
                     {webhookCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                     <span>{webhookCreating ? 'Creating...' : 'Create Webhook'}</span>
@@ -1523,7 +1529,7 @@ const LeadSources = (props) => {
                   <button
                     className='btn btn-sm btn-primary d-flex align-items-center gap-2'
                     onClick={handleCreateGoogleForms}
-                    disabled={googleFormsCreating || !googleFormsName.trim()}
+                    disabled={googleFormsCreating || !googleFormsName}
                   >
                     {googleFormsCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                     <span>{googleFormsCreating ? 'Creating...' : 'Create Connection'}</span>
@@ -1632,7 +1638,7 @@ const LeadSources = (props) => {
                   <button
                     className='btn btn-sm btn-primary d-flex align-items-center gap-2'
                     onClick={handleCreateJotForm}
-                    disabled={jotFormCreating || !jotFormName.trim()}
+                    disabled={jotFormCreating || !jotFormName}
                   >
                     {jotFormCreating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                     <span>{jotFormCreating ? 'Creating...' : 'Create Connection'}</span>
@@ -1741,7 +1747,7 @@ const LeadSources = (props) => {
                   <button
                     className='btn btn-sm btn-primary d-flex align-items-center gap-2'
                     onClick={handleCreateContactForm7}
-                    disabled={cf7Creating || !cf7Name.trim()}
+                    disabled={cf7Creating || !cf7Name}
                   >
                     {cf7Creating && <span className='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>}
                     <span>{cf7Creating ? 'Creating...' : 'Create Connection'}</span>
