@@ -257,7 +257,10 @@ const ConnectionCard = ({ connection, icon, onConfigure, onWebhooks, onFieldMapp
 
   const actionHandlers = {
     configure: () => onConfigure(connection),
-    webhooks: () => history.push(`/settings/${connectionId}/webhook`),
+    webhooks: () => {
+      const tab = new URLSearchParams(history.location.search).get('tab') || 'all';
+      history.push(`/settings/${connectionId}/webhook?tab=${tab}`);
+    },
     fieldMapping: () => onFieldMapping(connection),
     logs: () => onLogs(connection),
     syncLeads: () => onSyncLeads(connection),

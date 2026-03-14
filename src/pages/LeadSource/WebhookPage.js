@@ -143,7 +143,10 @@ const WebhookPage = () => {
         {/* Back button */}
         <button
           className='btn btn-sm btn-soft-dark d-flex align-items-center gap-1 mb-3'
-          onClick={() => history.push('/settings')}
+          onClick={() => {
+            const tab = new URLSearchParams(history.location.search).get('tab') || 'all';
+            history.push(`/settings?tab=${tab}`);
+          }}
         >
           <IoArrowBack />
           <span>Back to Connections</span>

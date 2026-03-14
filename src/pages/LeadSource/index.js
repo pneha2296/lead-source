@@ -43,7 +43,6 @@ import {
 } from '../../helpers/backend_helper';
 import ConfigureModal from './ConfigureModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
-import LogsModal from './LogsModal';
 import FieldMappingModal from './FieldMappingModal';
 import ConnectionCard from './ConnectionCard';
 
@@ -119,7 +118,8 @@ const getSourceIcon = (connection) => {
 const LeadSources = (props) => {
   const history = useHistory();
 
-  const [activeTab, setActiveTab] = useState('all');
+  const queryParams = new URLSearchParams(history.location.search);
+  const [activeTab, setActiveTab] = useState(queryParams.get('tab') || 'all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [modalUrl, setModalUrl] = useState('');
@@ -127,7 +127,6 @@ const LeadSources = (props) => {
   // Configure, Delete, Logs & Mapping modal state
   const [configureOpen, setConfigureOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [logsOpen, setLogsOpen] = useState(false);
   const [mappingOpen, setMappingOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
 
@@ -410,8 +409,8 @@ const LeadSources = (props) => {
   };
 
   const handleLogsClick = (connection) => {
-    setSelectedConnection(connection);
-    setLogsOpen(true);
+    const connId = connection._id || connection.id;
+    history.push(`/settings/${connId}/logs?tab=${activeTab}`);
   };
 
   const handleMappingClick = (connection) => {
@@ -809,7 +808,7 @@ const LeadSources = (props) => {
               <button
                 type='button'
                 className='btn btn-sm m-1 rounded-2 fs-13'
-                onClick={() => setActiveTab('installed')}
+                onClick={() => { setActiveTab('installed'); history.replace('?tab=installed'); }}
                 style={{
                   backgroundColor: activeTab === 'installed' ? '#3b82f6' : '#f8fafc',
                   color: activeTab === 'installed' ? 'white' : '#64748b',
@@ -821,7 +820,7 @@ const LeadSources = (props) => {
               <button
                 type='button'
                 className='btn btn-sm m-1 rounded-2 fs-13'
-                onClick={() => setActiveTab('all')}
+                onClick={() => { setActiveTab('all'); history.replace('?tab=all'); }}
                 style={{
                   backgroundColor: activeTab === 'all' ? '#3b82f6' : '#f8fafc',
                   color: activeTab === 'all' ? 'white' : '#64748b',
@@ -1062,16 +1061,6 @@ const LeadSources = (props) => {
             isOpen={mappingOpen}
             toggle={() => {
               setMappingOpen(false);
-              setSelectedConnection(null);
-            }}
-            connection={selectedConnection}
-          />
-
-          {/* Logs Modal */}
-          <LogsModal
-            isOpen={logsOpen}
-            toggle={() => {
-              setLogsOpen(false);
               setSelectedConnection(null);
             }}
             connection={selectedConnection}

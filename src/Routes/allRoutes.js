@@ -15,6 +15,7 @@ const NoAuth = lazy(() => import('./../pages/Error/NoAuth'));
 const LeadSource = lazy(() => import('../pages/LeadSource/index'));
 const LeadSourceSetup = lazy(() => import('../pages/LeadSource/ConnectionSetup'));
 const WebhookPage = lazy(() => import('../pages/LeadSource/WebhookPage'));
+const LogsPage = lazy(() => import('../pages/LeadSource/LogsPage'));
 const DocumentationPage = lazy(() => import('../pages/LeadSource/DocumentationPage'));
 
 import UserPermissions from './UserPermissions';
@@ -31,6 +32,11 @@ const digRoute = [
   {
     path: '/settings/:id/webhook',
     component: WebhookPage,
+    permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
+  },
+  {
+    path: '/settings/:id/logs',
+    component: LogsPage,
     permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
   },
   {

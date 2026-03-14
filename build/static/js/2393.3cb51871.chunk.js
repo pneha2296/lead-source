@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkcom_bot=self.webpackChunkcom_bot||[]).push([[2393],{82393(o,c,n){n.r(c),n.d(c,{default:()=>s});var t=n(89365),a=n(70579);const s=()=>"localhost"!==window.location.hostname?(window.location.href="".concat(window.location.origin,"/workspace"),(0,a.jsx)(t.A,{})):(0,a.jsx)(a.Fragment,{})}}]);
+//# sourceMappingURL=2393.3cb51871.chunk.js.map
