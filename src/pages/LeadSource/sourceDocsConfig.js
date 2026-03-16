@@ -59,7 +59,6 @@ const SOURCE_DOCS = {
       'Configure multiple pages and forms',
     ],
   },
-
   indiaMart: {
     title: 'IndiaMART',
     description: 'Connect your IndiaMART seller account to automatically pull enquiry leads into your CRM.',
@@ -105,7 +104,6 @@ const SOURCE_DOCS = {
       'Map IndiaMART fields to CRM fields',
     ],
   },
-
   zohoCrm: {
     title: 'Zoho CRM',
     description: 'Connect your Zoho CRM account via OAuth to sync leads between Zoho and your CRM.',
