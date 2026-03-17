@@ -6,6 +6,7 @@ const leadsourceAxios = axios.create({
   baseURL: LEADSOURCE_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'env': 'dev',
     Authorization: `Bearer ${localStorage.getItem('authToken')}`,
   },
 });

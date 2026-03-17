@@ -268,15 +268,6 @@ const LeadSources = (props) => {
       description: 'Connect with Typeform responses',
     },
     {
-      id: 8,
-      version: '0.0.1',
-      name: 'Phone Contact',
-      key: 'phoneContact',
-      isConnectShow: true,
-      icon: <ImMobile />,
-      description: 'Import leads from phone contacts',
-    },
-    {
       id: 10,
       version: '0.0.1',
       name: 'Zoho CRM',
@@ -311,6 +302,15 @@ const LeadSources = (props) => {
       isConnectShow: true,
       icon: <IconImg src={`${ICON_PATH}/contact-form-7-icon.png`} alt="Contact Form 7" />,
       description: 'Capture leads from WordPress Contact Form 7',
+    },
+    {
+      id: 8,
+      version: '0.0.1',
+      name: 'Phone Contact',
+      key: 'phoneContact',
+      isConnectShow: false,
+      icon: <ImMobile />,
+      description: 'Import leads from phone contacts',
     },
     {
       id: 14,
