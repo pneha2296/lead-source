@@ -48,7 +48,7 @@ const digRoute = [
   {
     path: '/settings/docs/:sourceKey',
     component: DocumentationPage,
-    permissions: UserPermissions.DIG.IMAGE_EXPERIENCE,
+    permissions: UserPermissions.LEAD_SOURCE.LEAD_SOURCE,
   },
   {
     path: '/settings/:sourceKey',
