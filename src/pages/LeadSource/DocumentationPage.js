@@ -19,7 +19,7 @@ import { SiGoogleads, SiLinkedin, SiTypeform, SiGoogleforms, SiZoho } from 'reac
 import { CgWebsite } from 'react-icons/cg';
 import { ImMobile } from 'react-icons/im';
 import { IoQrCodeOutline } from 'react-icons/io5';
-import { FaHubspot, FaIndustry, FaHandshake } from 'react-icons/fa';
+import { FaHubspot, FaIndustry, FaHandshake, FaAddressBook } from 'react-icons/fa';
 import { LiaSalesforce } from 'react-icons/lia';
 import { BsBuildingsFill } from 'react-icons/bs';
 import { MdRestaurant } from 'react-icons/md';
@@ -34,6 +34,7 @@ const SOURCE_ICONS = {
   linkedinLeadGen: <SiLinkedin style={{ color: '#0077B5' }} />,
   landingPage: <CgWebsite style={{ color: '#10b981' }} />,
   callConnect: <ImMobile style={{ color: '#f59e0b' }} />,
+  contactBook: <FaAddressBook style={{ color: '#22c55e' }} />,
   ocrApp: <IoQrCodeOutline style={{ color: '#8b5cf6' }} />,
   zohoCrm: <SiZoho style={{ color: '#D32F2F' }} />,
   hubspotCrm: <FaHubspot style={{ color: '#FF7A59' }} />,
