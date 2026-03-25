@@ -25,7 +25,7 @@ const FacebookConfigForm = ({ connection, onSave, toggle }) => {
   useEffect(() => {
     setError('');
     setLoadingPages(true);
-    getFacebookPages()
+    getFacebookPages(connection?._id)
       .then((res) => {
         const pageList = res.data || res || [];
         setPages(pageList);

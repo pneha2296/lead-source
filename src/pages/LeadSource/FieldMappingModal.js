@@ -23,7 +23,7 @@ const PROVIDER_FIELD_FETCHERS = {
   facebook_leadgen: async (connection) => {
     const config = connection?.configuration || {};
     if (!config.pageId) return [];
-    const pagesList = await getFacebookPages();
+    const pagesList = await getFacebookPages(connection?._id);
     const existing = (pagesList || []).find((p) => p.id === config.pageId);
     if (!existing) return [];
     const res = await getFacebookForms({
