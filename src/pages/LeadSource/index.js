@@ -566,8 +566,7 @@ const LeadSources = (props) => {
       case 'shopify': {
         const token = await getSessionToken({ leadSourceId: 'shopify' });
         setLoading(false);
-        // const shopifyUrl = `https://oauth.automationsbuilder.com/shopify-session?token=${token?.session}`;
-        const shopifyUrl = `http://localhost:5173/shopify-session?token=${token?.session}`;
+        const shopifyUrl = `https://oauth.automationsbuilder.com/shopify-session?token=${token?.session}`;
         const sWidth = 600;
         const sHeight = 700;
         const sLeft = window.screenX + (window.outerWidth - sWidth) / 2;
